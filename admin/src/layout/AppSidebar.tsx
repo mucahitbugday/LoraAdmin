@@ -65,6 +65,11 @@ export default function AppSidebar() {
                     label: 'Destek Talepleri',
                     icon: 'help-circle',
                     path: '/crm/support-tickets'
+                },
+                {
+                    label: 'Mesajlar',
+                    icon: 'message-square',
+                    path: '/crm/messages'
                 }
             ]
         }
