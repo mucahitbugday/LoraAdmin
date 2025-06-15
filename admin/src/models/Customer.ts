@@ -51,7 +51,7 @@ export interface Customer {
   id: number;
   name: string;
   surname: string;
-  image?: string;
+  image: string;
   email: string;
   phone: string;
   address: string;

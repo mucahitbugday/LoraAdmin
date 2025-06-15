@@ -85,6 +85,7 @@ export const customers: Customer[] = [
         id: 2,
         name: 'Jane Smith',
         surname: 'Smith',
+        image: 'https://demo.adminkit.io/img/avatars/avatar-2.jpg',
         email: 'jane.smith@example.com',
         phone: '0987654321',
         address: '456 Oak St, Somewhere, USA',
