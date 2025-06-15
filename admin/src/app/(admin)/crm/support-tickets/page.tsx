@@ -27,6 +27,8 @@ export default function SupportTicketsPage() {
     const [filterStatus, setFilterStatus] = useState<string>('all');
     const [filterPriority, setFilterPriority] = useState<string>('all');
     const [filterType, setFilterType] = useState<string>('all');
+    const [startDate, setStartDate] = useState<string>('');
+    const [endDate, setEndDate] = useState<string>('');
 
     useEffect(() => {
         setTickets([
@@ -82,7 +84,12 @@ export default function SupportTicketsPage() {
         const matchesPriority = filterPriority === 'all' || ticket.priority === filterPriority;
         const matchesType = filterType === 'all' || ticket.ticketType === filterType;
 
-        return matchesSearch && matchesStatus && matchesPriority && matchesType;
+        // Date range filtering
+        const ticketDate = new Date(ticket.date);
+        const matchesStartDate = !startDate || ticketDate >= new Date(startDate);
+        const matchesEndDate = !endDate || ticketDate <= new Date(endDate);
+
+        return matchesSearch && matchesStatus && matchesPriority && matchesType && matchesStartDate && matchesEndDate;
     });
 
     const getStatusBadgeClass = (status: SupportTicket['status']) => {
@@ -113,9 +120,34 @@ export default function SupportTicketsPage() {
         <div className="card flex-fill w-100">
             <div className="card-header pb-1">
                 <div className="float-end">
-                    <div className="d-flex">
+                    <div className="d-flex gap-2 align-items-center">
+                        <div className="input-group input-group-sm" style={{ width: '200px' }}>
+                            <span className="input-group-text bg-light border-0">
+                                <i className="fas fa-calendar"></i>
+                            </span>
+                            <input 
+                                type="date" 
+                                className="form-control form-control-sm bg-light border-0" 
+                                value={startDate}
+                                onChange={(e) => setStartDate(e.target.value)}
+                                placeholder="Başlangıç"
+                            />
+                        </div>
+                        <div className="input-group input-group-sm" style={{ width: '200px' }}>
+                            <span className="input-group-text bg-light border-0">
+                                <i className="fas fa-calendar"></i>
+                            </span>
+                            <input 
+                                type="date" 
+                                className="form-control form-control-sm bg-light border-0" 
+                                value={endDate}
+                                onChange={(e) => setEndDate(e.target.value)}
+                                placeholder="Bitiş"
+                            />
+                        </div>
                         <select
-                            className="form-select bg-light border-0 me-2"
+                            className="form-select form-select-sm bg-light border-0"
+                            style={{ width: '150px' }}
                             value={filterStatus}
                             onChange={e => setFilterStatus(e.target.value)}
                         >
@@ -125,7 +157,19 @@ export default function SupportTicketsPage() {
                             <option value="kapandı">Kapandı</option>
                         </select>
                         <select
-                            className="form-select bg-light border-0 me-2"
+                            className="form-select form-select-sm bg-light border-0"
+                            style={{ width: '150px' }}
+                            value={filterPriority}
+                            onChange={e => setFilterPriority(e.target.value)}
+                        >
+                            <option value="all">Tüm Öncelikler</option>
+                            <option value="yüksek">Yüksek</option>
+                            <option value="orta">Orta</option>
+                            <option value="düşük">Düşük</option>
+                        </select>
+                        <select
+                            className="form-select form-select-sm bg-light border-0"
+                            style={{ width: '150px' }}
                             value={filterType}
                             onChange={e => setFilterType(e.target.value)}
                         >
@@ -135,16 +179,21 @@ export default function SupportTicketsPage() {
                             <option value="finans onayı">Finans Onayı</option>
                             <option value="diğer">Diğer</option>
                         </select>
-                        <select className="form-select bg-light border-0 me-2" value={filterStatus} onChange={e => setFilterStatus(e.target.value)} >
-                            <option value="all">Tüm Durumlar</option>
-                            <option value="açık">Açık</option>
-                            <option value="beklemede">Beklemede</option>
-                            <option value="kapandı">Kapandı</option>
-                        </select>
-                        <input type="text" className="form-control form-control-sm bg-light border-0" placeholder="Ara..." />
+                        <div className="input-group input-group-sm" style={{ width: '200px' }}>
+                            <span className="input-group-text bg-light border-0">
+                                <i className="fas fa-search"></i>
+                            </span>
+                            <input 
+                                type="text" 
+                                className="form-control form-control-sm bg-light border-0" 
+                                placeholder="Ara..." 
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                            />
+                        </div>
                     </div>
                 </div>
-                <h5 className="card-title mb-0">Detek Taleperi</h5>
+                <h5 className="card-title mb-0">Destek Talepleri</h5>
             </div>
 
             <div className="card-body pt-2 pb-3">
