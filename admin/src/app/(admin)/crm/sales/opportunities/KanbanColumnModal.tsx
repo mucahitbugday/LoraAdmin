@@ -1,7 +1,7 @@
 'use client'
 
 import { Column } from '@/components/DraggableBoard';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface KanbanColumnModalProps {
     columns: Column[];
@@ -11,12 +11,17 @@ interface KanbanColumnModalProps {
 const KanbanColumnModal: React.FC<KanbanColumnModalProps> = ({ columns, onColumnsUpdate }) => {
     const [tempColumns, setTempColumns] = useState<Column[]>(columns);
 
+    // Modal her açıldığında mevcut kolonları güncelle
+    useEffect(() => {
+        setTempColumns(columns);
+    }, [columns]);
+
     const handleAddColumn = () => {
         const newCol: Column = {
             ColumnID: `col-${tempColumns.length + 1}`,
             ColumnName: '',
             ColumnDescription: '',
-            ColumnStatus: 'active',
+            ColumnStatus: true,
             Tasks: []
         };
         setTempColumns([...tempColumns, newCol]);
@@ -26,18 +31,16 @@ const KanbanColumnModal: React.FC<KanbanColumnModalProps> = ({ columns, onColumn
         setTempColumns(tempColumns.filter(col => col.ColumnID !== columnId));
     };
 
-    const handleColumnUpdate = (columnId: string, field: string, value: string) => {
-        setTempColumns(tempColumns.map(col => 
-            col.ColumnID === columnId 
+    const handleColumnUpdate = (columnId: string, field: string, value: any) => {
+        setTempColumns(tempColumns.map(col =>
+            col.ColumnID === columnId
                 ? { ...col, [field]: value }
                 : col
         ));
     };
 
     const handleSave = () => {
-        // Sadece aktif kolonları kaydet
-        const activeColumns = tempColumns.filter(col => col.ColumnStatus === 'active');
-        onColumnsUpdate(activeColumns);
+        onColumnsUpdate(tempColumns);
         // Modal'ı kapat
         const closeButton = document.querySelector('#CanbanColonAdd .btn-close') as HTMLButtonElement;
         if (closeButton) {
@@ -75,34 +78,37 @@ const KanbanColumnModal: React.FC<KanbanColumnModalProps> = ({ columns, onColumn
                                     {tempColumns.map((column) => (
                                         <tr key={column.ColumnID}>
                                             <td>
-                                                <input 
-                                                    type="text" 
+                                                <input
+                                                    type="text"
                                                     className="form-control form-control-sm"
                                                     value={column.ColumnName}
                                                     onChange={(e) => handleColumnUpdate(column.ColumnID, 'ColumnName', e.target.value)}
                                                 />
                                             </td>
                                             <td>
-                                                <input 
-                                                    type="text" 
+                                                <input
+                                                    type="text"
                                                     className="form-control form-control-sm"
                                                     value={column.ColumnDescription}
                                                     onChange={(e) => handleColumnUpdate(column.ColumnID, 'ColumnDescription', e.target.value)}
                                                 />
                                             </td>
                                             <td>
-                                                <select 
-                                                    className="form-select form-select-sm"
-                                                    value={column.ColumnStatus}
-                                                    onChange={(e) => handleColumnUpdate(column.ColumnID, 'ColumnStatus', e.target.value)}
-                                                >
-                                                    <option value="active">Aktif</option>
-                                                    <option value="inactive">Pasif</option>
-                                                </select>
+                                                <div className="form-check form-switch">
+                                                    <input
+                                                        className="form-check-input"
+                                                        type="checkbox"
+                                                        checked={column.ColumnStatus}
+                                                        onChange={(e) => handleColumnUpdate(column.ColumnID, 'ColumnStatus', e.target.checked)}
+                                                    />
+                                                    <label className="form-check-label">
+                                                        {column.ColumnStatus ? 'Aktif' : 'Pasif'}
+                                                    </label>
+                                                </div>
                                             </td>
                                             <td>
-                                                <button 
-                                                    type="button" 
+                                                <button
+                                                    type="button"
                                                     className="btn btn-outline-danger btn-sm"
                                                     onClick={() => handleDeleteColumn(column.ColumnID)}
                                                 >
@@ -116,7 +122,6 @@ const KanbanColumnModal: React.FC<KanbanColumnModalProps> = ({ columns, onColumn
                         </div>
                     </div>
                     <div className="modal-footer">
-                        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
                         <button type="button" className="btn btn-primary" onClick={handleSave}>Kaydet</button>
                     </div>
                 </div>

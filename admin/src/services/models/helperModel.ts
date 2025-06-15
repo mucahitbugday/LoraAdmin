@@ -23,7 +23,7 @@ export interface KanbanPageDataResponse {
     ColumnID: string;
     ColumnName: string;
     ColumnDescription: string;
-    ColumnStatus: string;
+    ColumnStatus: boolean;
     Tasks: KanbanTask[];
 }
 

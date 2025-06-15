@@ -3,67 +3,76 @@
 import { Column } from '@/components/DraggableBoard';
 import { KanbanPage } from '@/components/KanbanPage';
 import { usePathname } from 'next/navigation';
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import KanbanColumnModal from './KanbanColumnModal';
+
+const data = [
+    {
+        "ColumnID": "col-1",
+        "ColumnName": "İlk Temas",
+        "ColumnDescription": "İlk müşteri görüşmeleri bu aşamada tutulur.",
+        "ColumnStatus": true,
+        "Tasks": [
+            {
+                "TaskID": "task-101",
+                "TaskName": "ACME Firması - Ürün Tanıtımı",
+                "TaskDescription": "ACME firması ile ilk tanıtım toplantısı yapıldı.",
+                "TaskStatus": "open"
+            },
+            {
+                "TaskID": "task-102",
+                "TaskName": "Beta Ltd - İletişime Geçildi",
+                "TaskDescription": "Beta firması ile ön görüşme tamamlandı.",
+                "TaskStatus": "open"
+            }
+        ]
+    },
+    {
+        "ColumnID": "col-2",
+        "ColumnName": "Teklif Verildi",
+        "ColumnDescription": "Müşteriye teklif sunulan fırsatlar burada yer alır.",
+        "ColumnStatus": true,
+        "Tasks": [
+            {
+                "TaskID": "task-103",
+                "TaskName": "Gamma AŞ - Teklif Gönderildi",
+                "TaskDescription": "5.000₺ tutarında teklif gönderildi. Geri dönüş bekleniyor.",
+                "TaskStatus": "pending"
+            }
+        ]
+    },
+    {
+        "ColumnID": "col-3",
+        "ColumnName": "Müzakere",
+        "ColumnDescription": "Fiyat ve şartlar üzerinde görüşmeler sürüyor.",
+        "ColumnStatus": true,
+        "Tasks": [
+            {
+                "TaskID": "task-104",
+                "TaskName": "Delta Teknoloji - Müzakere Aşaması",
+                "TaskDescription": "İndirim talebi görüşülüyor.",
+                "TaskStatus": "negotiation"
+            }
+        ]
+    },
+]
 
 export default function page() {
     const pathname = usePathname();
-    const [columns, setColumns] = useState<Column[]>([
-        {
-            "ColumnID": "col-1",
-            "ColumnName": "İlk Temas",
-            "ColumnDescription": "İlk müşteri görüşmeleri bu aşamada tutulur.",
-            "ColumnStatus": "active",
-            "Tasks": [
-                {
-                    "TaskID": "task-101",
-                    "TaskName": "ACME Firması - Ürün Tanıtımı",
-                    "TaskDescription": "ACME firması ile ilk tanıtım toplantısı yapıldı.",
-                    "TaskStatus": "open"
-                },
-                {
-                    "TaskID": "task-102",
-                    "TaskName": "Beta Ltd - İletişime Geçildi",
-                    "TaskDescription": "Beta firması ile ön görüşme tamamlandı.",
-                    "TaskStatus": "open"
-                }
-            ]
-        },
-        {
-            "ColumnID": "col-2",
-            "ColumnName": "Teklif Verildi",
-            "ColumnDescription": "Müşteriye teklif sunulan fırsatlar burada yer alır.",
-            "ColumnStatus": "active",
-            "Tasks": [
-                {
-                    "TaskID": "task-103",
-                    "TaskName": "Gamma AŞ - Teklif Gönderildi",
-                    "TaskDescription": "5.000₺ tutarında teklif gönderildi. Geri dönüş bekleniyor.",
-                    "TaskStatus": "pending"
-                }
-            ]
-        },
-        {
-            "ColumnID": "col-3",
-            "ColumnName": "Müzakere",
-            "ColumnDescription": "Fiyat ve şartlar üzerinde görüşmeler sürüyor.",
-            "ColumnStatus": "active",
-            "Tasks": [
-                {
-                    "TaskID": "task-104",
-                    "TaskName": "Delta Teknoloji - Müzakere Aşaması",
-                    "TaskDescription": "İndirim talebi görüşülüyor.",
-                    "TaskStatus": "negotiation"
-                }
-            ]
-        },
-    ]);
+    const [columns, setColumns] = useState<Column[]>(data);
+
+    // Sadece aktif kolonları filtrele
+    const activeColumns = useMemo(() => {
+        console.log('çalıştı', columns.filter(col => col.ColumnStatus))
+        return columns.filter(col => col.ColumnStatus);
+    }, [columns]);
 
     const handleColumnChange = (change: any) => {
         console.log('Kolon değiştirildi');
     };
 
     const handleColumnsUpdate = (updatedColumns: Column[]) => {
+        console.log('updatedColumns', updatedColumns)
         setColumns(updatedColumns);
     };
 
@@ -129,14 +138,15 @@ export default function page() {
                     </div>
                 </div>
             </div>
+            
+            {activeColumns && (
 
-            {columns && (
-                <KanbanPage initialColumns={columns} onColumnChange={handleColumnChange} renderItemContent={renderItemContent} />
+                <KanbanPage initialColumns={activeColumns} onColumnChange={handleColumnChange} renderItemContent={renderItemContent} />
             )}
 
-            <KanbanColumnModal 
-                columns={columns} 
-                onColumnsUpdate={handleColumnsUpdate} 
+            <KanbanColumnModal
+                columns={columns}
+                onColumnsUpdate={handleColumnsUpdate}
             />
         </div>
     )

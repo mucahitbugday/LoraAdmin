@@ -11,7 +11,7 @@ interface Column {
     ColumnID: string;
     ColumnName: string;
     ColumnDescription: string;
-    ColumnStatus: string;
+    ColumnStatus: boolean;
     Tasks: Task[];
 }
 

@@ -11,7 +11,7 @@ interface Column {
     ColumnID: string;
     ColumnName: string;
     ColumnDescription: string;
-    ColumnStatus: string;
+    ColumnStatus: boolean;
     Tasks: Task[];
 }
 
@@ -28,18 +28,13 @@ interface DraggableBoardProps {
     renderItemContent?: (task: Task) => React.ReactNode;
 }
 
-export const KanbanPage: React.FC<DraggableBoardProps> = ({
-    initialColumns,
-    onColumnChange,
-    onOpenItemModal,
-    onAddItemModal,
-    renderItemContent
-}) => {
+export const KanbanPage: React.FC<DraggableBoardProps> = ({ initialColumns, onColumnChange, onOpenItemModal, onAddItemModal, renderItemContent }) => {
     const [columns, setColumns] = useState<Column[]>(initialColumns);
     const dragItem = useRef<any>(null);
     const dragNode = useRef<any>(null);
     const [dragging, setDragging] = useState(false);
     const [dragOverColumn, setDragOverColumn] = useState<string | null>(null);
+    console.log('dd-columns',columns)
 
     const handleDragStart = (e: React.DragEvent, taskId: string, sourceColumn: string) => {
         e.dataTransfer.setData('taskId', taskId);
