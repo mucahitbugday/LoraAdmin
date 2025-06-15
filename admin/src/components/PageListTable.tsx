@@ -1,5 +1,5 @@
 'use client'
-import { usePathname, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import React, { useState, useEffect } from 'react';
 import moment from 'moment';
 import { menuService } from '@/services/helperService';
@@ -41,7 +41,7 @@ export default function OrgPage({ pathname, pageTitle }: { pathname: string, pag
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [data, setData] = useState<any>([]);
-    const [pagination, setPagination] = useState<PaginationInfo>({ currentPage: 1, pageSize: 15, totalCount: 1, totalPages: 1 });
+    const [pagination, setPagination] = useState<PaginationInfo>({ currentPage: 1, pageSize: 10, totalCount: 1, totalPages: 1 });
     const [columns, setColumns] = useState<TableColumn[]>([]);
     const [filters, setFilters] = useState<FilterState>({});
     const [tempFilters, setTempFilters] = useState<FilterState>({});
@@ -72,7 +72,7 @@ export default function OrgPage({ pathname, pageTitle }: { pathname: string, pag
                 const detectedColumns = Object.keys(response?.pageData[0] || {}).map(key => {
                     const value = response.pageData[0]?.[key];
                     let type: TableColumn['type'] = 'text';
-                    
+
                     if (typeof value === 'boolean') {
                         type = 'boolean';
                     } else if (typeof value === 'string') {
@@ -82,15 +82,15 @@ export default function OrgPage({ pathname, pageTitle }: { pathname: string, pag
                             type = 'image';
                         }
                     }
-                    
-                    return { 
-                        field: key, 
-                        header: key.startsWith('_') ? '' : key, 
+
+                    return {
+                        field: key,
+                        header: key.startsWith('_') ? '' : key,
                         sortable: true,
                         type
                     };
                 }).filter(col => !col.field.startsWith('_')); // Remove columns that start with _
-                
+
                 setColumns(detectedColumns);
                 setPagination(prev => ({ ...prev, currentPage: debouncedParams.page, totalCount: response.totalCount, totalPages: Math.ceil(response.totalCount / pagination.pageSize) }));
             } catch (error) {
@@ -240,7 +240,6 @@ export default function OrgPage({ pathname, pageTitle }: { pathname: string, pag
         const { currentPage, totalPages } = pagination;
         const maxVisiblePages = 5;
 
-        // Sayfa aralığını hesapla
         let startPage = Math.max(currentPage - Math.floor(maxVisiblePages / 2), 1);
         let endPage = startPage + maxVisiblePages - 1;
 
@@ -258,29 +257,29 @@ export default function OrgPage({ pathname, pageTitle }: { pathname: string, pag
             <nav>
                 <ul className="pagination pagination-sm mb-0">
                     <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
-                        <button className="page-link" onClick={() => onPageChange(1)} disabled={currentPage === 1}   >
+                        <button className="page-link" onClick={() => onPageChange(1)} disabled={currentPage === 1}>
                             <i className="align-middle" data-feather="chevrons-left"></i>
                         </button>
                     </li>
                     <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
-                        <button className="page-link" onClick={() => onPageChange(currentPage - 1)} disabled={currentPage === 1}   >
+                        <button className="page-link" onClick={() => onPageChange(currentPage - 1)} disabled={currentPage === 1}>
                             <i className="align-middle" data-feather="chevron-left"></i>
                         </button>
                     </li>
                     {pages.map((page) => (
                         <li key={page} className={`page-item ${currentPage === page ? 'active' : ''}`}>
-                            <button className="page-link" onClick={() => onPageChange(page)}   >
+                            <button className="page-link" onClick={() => onPageChange(page)}>
                                 {page}
                             </button>
                         </li>
                     ))}
                     <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
-                        <button className="page-link" onClick={() => onPageChange(currentPage + 1)} disabled={currentPage === totalPages}   >
+                        <button className="page-link" onClick={() => onPageChange(currentPage + 1)} disabled={currentPage === totalPages}>
                             <i className="align-middle" data-feather="chevron-right"></i>
                         </button>
                     </li>
                     <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
-                        <button className="page-link" onClick={() => onPageChange(totalPages)} disabled={currentPage === totalPages}   >
+                        <button className="page-link" onClick={() => onPageChange(totalPages)} disabled={currentPage === totalPages}>
                             <i className="align-middle" data-feather="chevrons-right"></i>
                         </button>
                     </li>
@@ -374,25 +373,25 @@ export default function OrgPage({ pathname, pageTitle }: { pathname: string, pag
                                         {formattedData.map((row: any, rowIndex) => (
                                             <tr key={rowIndex}>
                                                 {columns.map((column, colIndex) => (
-                                                    <td 
-                                                        key={colIndex} 
+                                                    <td
+                                                        key={colIndex}
                                                         onClick={() => {
                                                             if (row['_url']) {
-                                                                router.push(`/${row['_url']}/${row['ID']}`);
+                                                                router.push(`/${row['_url']}`);
                                                             }
-                                                        }} 
-                                                        style={{ 
-                                                            fontSize: '0.875rem', 
+                                                        }}
+                                                        style={{
+                                                            fontSize: '0.875rem',
                                                             whiteSpace: 'nowrap',
                                                             cursor: row['_url'] ? 'pointer' : 'default'
                                                         }}
                                                     >
                                                         {column.type === 'image' && row[column.field] ? (
-                                                            <img 
-                                                                src={row[column.field]} 
-                                                                width="32" 
-                                                                height="32" 
-                                                                className="rounded-circle my-n1" 
+                                                            <img
+                                                                src={row[column.field]}
+                                                                width="32"
+                                                                height="32"
+                                                                className="rounded-circle my-n1"
                                                                 alt={column.header}
                                                                 onError={(e) => {
                                                                     e.currentTarget.src = '/placeholder.png';
@@ -444,10 +443,10 @@ export default function OrgPage({ pathname, pageTitle }: { pathname: string, pag
 
                         <div className='gap-2 d-flex'>
                             <button className="btn btn-secondary flex-grow-1" onClick={handleApplyFilters}>
-                                <i className="fas fa-check"></i> Uygula
+                                <i className="align-middle" data-feather="check"></i> Uygula
                             </button>
                             <button className="btn btn-danger flex-grow-1" onClick={handleClearFilters}>
-                                <i className="fas fa-times"></i> Temizle
+                                <i className="align-middle" data-feather="x"></i> Temizle
                             </button>
                         </div>
 
