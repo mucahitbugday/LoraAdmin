@@ -39,6 +39,7 @@ export default function OrgPage({ pathname, pageTitle }: { pathname: string, pag
     const [pagination, setPagination] = useState<PaginationInfo>({ currentPage: 1, pageSize: 15, totalCount: 1, totalPages: 1 });
     const [columns, setColumns] = useState<TableColumn[]>([]);
     const [filters, setFilters] = useState<FilterState>({});
+    const [tempFilters, setTempFilters] = useState<FilterState>({});
     const [filterOptions, setFilterOptions] = useState<FilterOption[]>([]);
     const [sort, setSort] = useState<SortOption | null>(null);
     const [formattedData, setFormattedData] = useState<any[]>([]);
@@ -126,8 +127,23 @@ export default function OrgPage({ pathname, pageTitle }: { pathname: string, pag
     }, [data]);
 
     const handleFilterChange = (field: string, value: any) => {
-        setFilters(prev => ({ ...prev, [field]: value || undefined }));
+        setTempFilters(prev => ({ ...prev, [field]: value || undefined }));
     };
+
+    const handleApplyFilters = () => {
+        setFilters(tempFilters);
+        setPagination(prev => ({ ...prev, currentPage: 1 })); // Reset to first page on filter change
+    };
+
+    const handleClearFilters = () => {
+        setTempFilters({});
+        setFilters({});
+        setPagination(prev => ({ ...prev, currentPage: 1 }));
+    };
+
+    useEffect(() => {
+        setTempFilters(filters);
+    }, [filters]);
 
     const handleRemoveFilter = (field: string) => {
         setFilters(prev => {
@@ -147,7 +163,7 @@ export default function OrgPage({ pathname, pageTitle }: { pathname: string, pag
 
     const renderFilterInput = (filter: FilterOption) => {
         const commonProps = {
-            value: filters[filter.field] || '',
+            value: tempFilters[filter.field] || '',
             onChange: (e: any) => handleFilterChange(filter.field, e.target.value),
             placeholder: `Search ${filter.label}...`
         };
@@ -239,7 +255,7 @@ export default function OrgPage({ pathname, pageTitle }: { pathname: string, pag
     };
 
     const renderSelectedFilters = () => {
-        const activeFilters = Object.entries(filters).filter(([_, value]) => value !== undefined && value !== '');
+        const activeFilters = Object.entries(tempFilters).filter(([_, value]) => value !== undefined && value !== '');
         if (activeFilters.length === 0) return null;
 
         return (
@@ -300,38 +316,38 @@ export default function OrgPage({ pathname, pageTitle }: { pathname: string, pag
                             <h5 className="text-muted">Veri bulunamadı</h5>
                         </div>
                     ) : (
-                        <div className="table-responsive flex-grow-1">
-                            <table className="table table-striped table-hover" style={{ width: '100%', cursor: 'pointer' }}>
-                                <thead className="table-light">
-                                    <tr>
-                                        {columns.map((column, index) => (
-                                            <th key={index}
-                                                onClick={() => column.sortable && handleSort(column.field)}
-                                                style={{ cursor: column.sortable ? 'pointer' : 'default', whiteSpace: 'nowrap' }}
-                                            >
-                                                <div className="d-flex align-items-center">
-                                                    {column.header}
-                                                    {column.sortable && renderSortIcon(column.field)}
-                                                </div>
-                                            </th>
+                        // <div className="table-responsive flex-grow-1">
+                        <table className="table table-striped table-hover m-0" style={{ width: '100%', cursor: 'pointer' }}>
+                            <thead className="table-light">
+                                <tr>
+                                    {columns.map((column, index) => (
+                                        <th key={index}
+                                            onClick={() => column.sortable && handleSort(column.field)}
+                                            style={{ cursor: column.sortable ? 'pointer' : 'default', whiteSpace: 'nowrap' }}
+                                        >
+                                            <div className="d-flex align-items-center">
+                                                {column.header}
+                                                {column.sortable && renderSortIcon(column.field)}
+                                            </div>
+                                        </th>
+                                    ))}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {formattedData.map((row: any, rowIndex) => (
+                                    <tr key={rowIndex}>
+                                        {columns.map((column, colIndex) => (
+                                            <td key={colIndex} style={{ fontSize: '0.875rem', whiteSpace: 'nowrap' }}>
+                                                {column.render ? column.render(row[column.field], row) : row[column.field]}
+                                            </td>
                                         ))}
                                     </tr>
-                                </thead>
-                                <tbody>
-                                    {formattedData.map((row: any, rowIndex) => (
-                                        <tr key={rowIndex}>
-                                            {columns.map((column, colIndex) => (
-                                                <td key={colIndex} style={{ fontSize: '0.875rem', whiteSpace: 'nowrap' }}>
-                                                    {column.render ? column.render(row[column.field], row) : row[column.field]}
-                                                </td>
-                                            ))}
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
+                                ))}
+                            </tbody>
+                        </table>
+                        // </div>
                     )}
-                    <div className="card-footer bg-transparent border-0 d-flex flex-column-reverse flex-md-row justify-content-between align-items-center py-3 gap-2 mt-auto">
+                    <div className="card-footer bg-transparent border-0 d-flex flex-column-reverse flex-md-row justify-content-between align-items-center py-3 gap-2">
                         <small className="text-muted text-center text-md-start w-100 w-md-auto">
                             {pagination.totalCount > 0
                                 ? `${(pagination.currentPage - 1) * pagination.pageSize + 1} - ${Math.min(pagination.currentPage * pagination.pageSize, pagination.totalCount)} of ${pagination.totalCount} records`
@@ -362,9 +378,13 @@ export default function OrgPage({ pathname, pageTitle }: { pathname: string, pag
                             </div>
                         ))}
 
-                        <div className='gap-2'>
-                            <button className="btn btn-secondary w-75"><i className="fas fa-check"></i> Uygula</button>
-                            <button className="btn btn-danger w-25"><i className="fas fa-times"></i> Temizle</button>
+                        <div className='gap-2 d-flex'>
+                            <button className="btn btn-secondary flex-grow-1" onClick={handleApplyFilters}>
+                                <i className="fas fa-check"></i> Uygula
+                            </button>
+                            <button className="btn btn-danger flex-grow-1" onClick={handleClearFilters}>
+                                <i className="fas fa-times"></i> Temizle
+                            </button>
                         </div>
 
 
