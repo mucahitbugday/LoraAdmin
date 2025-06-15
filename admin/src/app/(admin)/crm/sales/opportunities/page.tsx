@@ -138,9 +138,8 @@ export default function page() {
                     </div>
                 </div>
             </div>
-            
-            {activeColumns && (
 
+            {activeColumns && (
                 <KanbanPage initialColumns={activeColumns} onColumnChange={handleColumnChange} renderItemContent={renderItemContent} />
             )}
 
