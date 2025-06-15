@@ -112,7 +112,7 @@ export const KanbanPage: React.FC<DraggableBoardProps> = ({
             {columns.map(column => (
                 <div key={column.ColumnID} className="flex-shrink-0 me-3" style={{ width: "300px" }}>
                     <div className="card h-100">
-                        <div className="card-header py-2 d-flex justify-content-between align-items-center" style={{ backgroundColor: '#222e3c', borderBottom: '1px solid #edf2f7' }}>
+                        <div className="card-header py-2 d-flex justify-content-between align-items-center" style={{ backgroundColor: '#3e536b', borderBottom: '1px solid #edf2f7' }}>
                             <h5 className="card-title mb-0" style={{ fontSize: '0.95rem', color: '#fff', fontWeight: '600' }}>
                                 {column.ColumnName}
                             </h5>
