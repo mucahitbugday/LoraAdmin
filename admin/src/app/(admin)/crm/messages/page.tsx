@@ -93,7 +93,10 @@ const ChatCard: React.FC = () => {
 
     // Function to scroll to bottom
     const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+        messagesEndRef.current?.scrollIntoView({ 
+            behavior: 'smooth',
+            block: 'end'
+        });
     };
 
     // Scroll to bottom when messages change
@@ -133,7 +136,7 @@ const ChatCard: React.FC = () => {
     };
 
     return (
-        <div className="card h-100">
+        <div className="card h-100 m-0">
             <div className="card-body h-100 p-0">
                 <div className="row g-0 h-100">
                     {/* Contacts Sidebar */}
