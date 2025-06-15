@@ -1,0 +1,28 @@
+🔸 Teklifler (Quotes)
+🎯 Amaç: Müşterilere sunulan resmi tekliflerin listelenmesi ve takibi.
+🧱 Arayüz Tasarımı:
+Tablo görünümü
+
+PDF önizleme veya hızlı gösterim (modalle)
+
+Duruma göre renkli badge'ler: Onay Bekliyor, Onaylandı, Reddedildi
+
+📋 Gösterilecek Alanlar:
+Alan	Açıklama
+Teklif No	Örn. TLF-2025-0005
+Müşteri	Teklif verilen kişi/şirket
+Teklif Tutarı	15.000₺
+Oluşturulma Tarihi	14.06.2025
+Durum	Onay Bekliyor / Onaylandı
+Son Geçerlilik Tarihi	Geçerlilik süresi
+
+🛠️ Aksiyonlar:
+Teklif oluştur (form)
+
+PDF olarak indir/görüntüle
+
+E-posta ile gönder
+
+Durum değiştir: Onayla, Reddet
+
+Kopyala → yeni teklif oluştur

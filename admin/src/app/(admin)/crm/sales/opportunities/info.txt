@@ -1,0 +1,26 @@
+🔸 Fırsatlar (Opportunities)
+🎯 Amaç: Satış potansiyelini gösterir ve yönetilir.
+🧱 Arayüz Tasarımı:
+Kart görünümü (Kanban style) veya liste tablo
+
+Aşamaya göre gruplandırılmış sütunlar:
+İlk Temas → Teklif Verildi → Müzakere → Kazanıldı / Kaybedildi
+
+📋 Gösterilecek Alanlar:
+Alan	Açıklama
+Fırsat Adı	"ACME Yeni Sipariş"
+Müşteri Adı	Kime ait
+Sorumlu Kullanıcı	Satış temsilcisi
+Fırsat Aşaması	Şu an hangi aşamada
+Tahmini Kapanış Tarihi	Ne zaman sonuçlanması bekleniyor
+Fırsat Tutarı (₺/$)	Beklenen gelir
+Etiketler / Durumlar	"Yüksek Öncelik", "Sıcak" gibi
+
+🛠️ Aksiyonlar:
+Sürükle-bırak ile aşama değiştirme (kanban)
+
+Detay sayfasına git
+
+Fırsatı düzenle, sil
+
+Yeni fırsat oluştur

@@ -1,0 +1,28 @@
+🔸 Siparişler (Orders)
+🎯 Amaç: Onaylanmış siparişlerin yönetimi ve takibi.
+🧱 Arayüz Tasarımı:
+Tablo görünümü
+
+Duruma göre ikonlar veya renkli satırlar
+(🟡 Hazırlanıyor, 🟢 Teslim Edildi, 🔴 İptal Edildi)
+
+📋 Gösterilecek Alanlar:
+Alan	Açıklama
+Sipariş No	ORD-2025-0032
+Müşteri	Siparişi veren kişi/şirket
+Sipariş Tarihi	14.06.2025
+Sipariş Tutarı	25.000₺
+Sipariş Durumu	Hazırlanıyor / Teslim Edildi
+Teslim Tarihi	Gerçekleşen teslim tarihi
+Fatura Durumu	Fatura kesildi mi?
+
+🛠️ Aksiyonlar:
+Sipariş detay sayfasına git
+
+Siparişi güncelle (durum, ürün vs.)
+
+Fatura oluştur veya PDF gör
+
+Siparişi iptal et
+
+Teslim bilgisi gir
