@@ -85,11 +85,11 @@ export default function OrgPage({ pathname, pageTitle }: { pathname: string, pag
                     
                     return { 
                         field: key, 
-                        header: key, 
+                        header: key.startsWith('_') ? '' : key, 
                         sortable: true,
                         type
                     };
-                });
+                }).filter(col => !col.field.startsWith('_')); // Remove columns that start with _
                 
                 setColumns(detectedColumns);
                 setPagination(prev => ({ ...prev, currentPage: debouncedParams.page, totalCount: response.totalCount, totalPages: Math.ceil(response.totalCount / pagination.pageSize) }));
@@ -355,7 +355,7 @@ export default function OrgPage({ pathname, pageTitle }: { pathname: string, pag
                         <>
                             <div className="table-responsive flex-grow-1" style={{ overflowY: 'auto' }}>
                                 <table className="table table-striped table-hover m-0" style={{ width: '100%', cursor: 'pointer' }}>
-                                    <thead className="table-light sticky-top" style={{ zIndex: 1 }}>
+                                    <thead className="table-light sticky-top">
                                         <tr>
                                             {columns.map((column, index) => (
                                                 <th key={index}
