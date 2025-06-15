@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import feather from 'feather-icons';
 import { useSidebar } from '@/context/SidebarContext';
 
@@ -9,9 +9,26 @@ export default function AppHeader() {
     const [isNotificationOpen, setIsNotificationOpen] = useState(false);
     const [isMessageOpen, setIsMessageOpen] = useState(false);
     const [isUserOpen, setIsUserOpen] = useState(false);
+
+    const handleNotificationToggle = useCallback(() => {
+        setIsNotificationOpen(prev => !prev);
+    }, []);
+
+    const handleMessageToggle = useCallback(() => {
+        setIsMessageOpen(prev => !prev);
+    }, []);
+
+    const handleUserToggle = useCallback(() => {
+        setIsUserOpen(prev => !prev);
+    }, []);
+
     useEffect(() => {
         feather.replace();
+        return () => {
+            // Cleanup any feather icons if needed
+        };
     }, []);
+
     return (
         <nav className="navbar navbar-expand navbar-light navbar-bg">
             <a className="sidebar-toggle js-sidebar-toggle" onClick={toggleSidebar}>
@@ -21,7 +38,7 @@ export default function AppHeader() {
             <div className="navbar-collapse collapse">
                 <ul className="navbar-nav navbar-align">
                     <li className="nav-item dropdown">
-                        <a className="nav-icon dropdown-toggle" href="#" id="alertsDropdown" data-bs-toggle="dropdown" aria-expanded="true" onClick={() => setIsNotificationOpen(!isNotificationOpen)}>
+                        <a className="nav-icon dropdown-toggle" href="#" id="alertsDropdown" data-bs-toggle="dropdown" aria-expanded="true" onClick={handleNotificationToggle}>
                             <div className="position-relative">
                                 <i className="align-middle text-light" data-feather="bell"></i>
                                 <span className="indicator">4</span>
@@ -50,7 +67,7 @@ export default function AppHeader() {
                         </div>
                     </li>
                     <li className="nav-item dropdown">
-                        <a className="nav-icon dropdown-toggle" href="#" id="messagesDropdown" data-bs-toggle="dropdown" onClick={() => setIsMessageOpen(!isMessageOpen)}>
+                        <a className="nav-icon dropdown-toggle" href="#" id="messagesDropdown" data-bs-toggle="dropdown" onClick={handleMessageToggle}>
                             <div className="position-relative">
                                 <i className="align-middle text-light" data-feather="message-square"></i>
                             </div>
@@ -80,11 +97,11 @@ export default function AppHeader() {
                         </div>
                     </li>
                     <li className="nav-item dropdown">
-                        <a className="nav-icon dropdown-toggle d-inline-block d-sm-none" href="#" data-bs-toggle="dropdown" onClick={() => setIsUserOpen(!isUserOpen)}>
+                        <a className="nav-icon dropdown-toggle d-inline-block d-sm-none" href="#" data-bs-toggle="dropdown" onClick={handleUserToggle}>
                             <i className="align-middle" data-feather="settings"></i>
                         </a>
 
-                        <a className="nav-link dropdown-toggle d-none d-sm-inline-block text-light" href="#" data-bs-toggle="dropdown" onClick={() => setIsUserOpen(!isUserOpen)}>
+                        <a className="nav-link dropdown-toggle d-none d-sm-inline-block text-light" href="#" data-bs-toggle="dropdown" onClick={handleUserToggle}>
                             <img src="https://picsum.photos/200/300" className="avatar img-fluid rounded me-1" /> <span className="text-light">Admin</span>
                         </a>
                         <div className={`dropdown-menu dropdown-menu-end ${isUserOpen ? 'show' : ''}`} data-bs-popper="static">

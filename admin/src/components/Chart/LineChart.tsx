@@ -85,6 +85,7 @@ const LineChart: React.FC<LineChartProps> = ({
         return () => {
             if (chartInstance.current) {
                 chartInstance.current.destroy()
+                chartInstance.current = null
             }
         }
     }, [data, labels, label, borderColor, backgroundColor, height])
