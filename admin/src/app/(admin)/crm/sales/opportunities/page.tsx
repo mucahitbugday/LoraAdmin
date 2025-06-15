@@ -1,7 +1,6 @@
 'use client'
 
-import { Column } from '@/components/DraggableBoard';
-import { KanbanPage } from '@/components/KanbanPage';
+import { Column, KanbanPage } from '@/components/KanbanPage';
 import { usePathname } from 'next/navigation';
 import React, { useState, useMemo, useEffect } from 'react'
 import KanbanColumnModal from './KanbanColumnModal';
@@ -12,6 +11,7 @@ const data = [
         "ColumnName": "İlk Temas",
         "ColumnDescription": "İlk müşteri görüşmeleri bu aşamada tutulur.",
         "ColumnStatus": true,
+        "ColumnOrderBy":1,
         "Tasks": [
             {
                 "TaskID": "task-101",
@@ -32,6 +32,7 @@ const data = [
         "ColumnName": "Teklif Verildi",
         "ColumnDescription": "Müşteriye teklif sunulan fırsatlar burada yer alır.",
         "ColumnStatus": true,
+        "ColumnOrderBy":2,
         "Tasks": [
             {
                 "TaskID": "task-103",
@@ -45,7 +46,8 @@ const data = [
         "ColumnID": "col-3",
         "ColumnName": "Müzakere",
         "ColumnDescription": "Fiyat ve şartlar üzerinde görüşmeler sürüyor.",
-        "ColumnStatus": true,
+        "ColumnStatus": false,
+        "ColumnOrderBy":3,
         "Tasks": [
             {
                 "TaskID": "task-104",
@@ -63,13 +65,12 @@ export default function page() {
     const [activeColumns, setActiveColumns] = useState<Column[]>([]);
 
     useEffect(() => {
-        const tmp = columns.filter(x => x.ColumnStatus == true)
-        console.log('tmp',tmp)
+        const tmp = columns.filter(x => x.ColumnStatus)
         setActiveColumns(tmp);
-    }, []);
+    }, [columns]);
 
     const handleColumnChange = (change: any) => {
-        console.log('Kolon değiştirildi');
+        console.log('Kolon değiştirildi', change);
     };
 
     const handleColumnsUpdate = (updatedColumns: Column[]) => {
@@ -140,16 +141,9 @@ export default function page() {
                 </div>
             </div>
 
-            {JSON.stringify(activeColumns)}
+            <KanbanPage initialColumns={columns} onColumnChange={handleColumnChange} renderItemContent={renderItemContent} />
 
-            {activeColumns && (
-                <KanbanPage initialColumns={activeColumns} onColumnChange={handleColumnChange} renderItemContent={renderItemContent} />
-            )}
-
-            <KanbanColumnModal
-                columns={columns}
-                onColumnsUpdate={handleColumnsUpdate}
-            />
+            <KanbanColumnModal columns={columns} onColumnsUpdate={handleColumnsUpdate} />
         </div>
     )
 }

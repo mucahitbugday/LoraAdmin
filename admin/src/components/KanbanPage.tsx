@@ -12,6 +12,7 @@ interface Column {
     ColumnName: string;
     ColumnDescription: string;
     ColumnStatus: boolean;
+    ColumnOrderBy:number
     Tasks: Task[];
 }
 
@@ -34,7 +35,6 @@ export const KanbanPage: React.FC<DraggableBoardProps> = ({ initialColumns, onCo
     const dragNode = useRef<any>(null);
     const [dragging, setDragging] = useState(false);
     const [dragOverColumn, setDragOverColumn] = useState<string | null>(null);
-    console.log('dd-columns',columns)
 
     const handleDragStart = (e: React.DragEvent, taskId: string, sourceColumn: string) => {
         e.dataTransfer.setData('taskId', taskId);

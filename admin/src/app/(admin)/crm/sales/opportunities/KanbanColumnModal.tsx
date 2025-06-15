@@ -1,6 +1,6 @@
 'use client'
 
-import { Column } from '@/components/DraggableBoard';
+import { Column } from '@/components/KanbanPage';
 import React, { useState, useEffect } from 'react';
 
 interface KanbanColumnModalProps {
@@ -22,6 +22,7 @@ const KanbanColumnModal: React.FC<KanbanColumnModalProps> = ({ columns, onColumn
             ColumnName: '',
             ColumnDescription: '',
             ColumnStatus: true,
+            ColumnOrderBy: 0,
             Tasks: []
         };
         setTempColumns([...tempColumns, newCol]);
@@ -68,10 +69,11 @@ const KanbanColumnModal: React.FC<KanbanColumnModalProps> = ({ columns, onColumn
                             <table className="table table-striped">
                                 <thead>
                                     <tr>
-                                        <th>Kolon Adı</th>
-                                        <th>Açıklama</th>
-                                        <th>Durum</th>
-                                        <th>İşlemler</th>
+                                        <th style={{ width: '20%' }}>Kolon Adı</th>
+                                        <th style={{ width: '35%' }}>Açıklama</th>
+                                        <th style={{ width: '10%' }}>Sıra</th>
+                                        <th style={{ width: '15%' }}>Durum</th>
+                                        <th style={{ width: '10%' }}>İşlemler</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -90,6 +92,15 @@ const KanbanColumnModal: React.FC<KanbanColumnModalProps> = ({ columns, onColumn
                                                     type="text"
                                                     className="form-control form-control-sm"
                                                     value={column.ColumnDescription}
+                                                    onChange={(e) => handleColumnUpdate(column.ColumnID, 'ColumnDescription', e.target.value)}
+                                                />
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="number"
+                                                    min={0}
+                                                    className="form-control form-control-sm"
+                                                    value={column.ColumnOrderBy}
                                                     onChange={(e) => handleColumnUpdate(column.ColumnID, 'ColumnDescription', e.target.value)}
                                                 />
                                             </td>
