@@ -33,7 +33,7 @@ export interface FilterState {
     [key: string]: any;
 }
 
-export default function OrgPage({ pathname }: { pathname: string }) {
+export default function OrgPage({ pathname, pageTitle }: { pathname: string, pageTitle: string }) {
     const [loading, setLoading] = useState(false);
     const [data, setData] = useState<any>([]);
     const [pagination, setPagination] = useState<PaginationInfo>({ currentPage: 1, pageSize: 15, totalCount: 1, totalPages: 1 });
@@ -41,10 +41,9 @@ export default function OrgPage({ pathname }: { pathname: string }) {
     const [filters, setFilters] = useState<FilterState>({});
     const [filterOptions, setFilterOptions] = useState<FilterOption[]>([]);
     const [sort, setSort] = useState<SortOption | null>(null);
-    const [showFilters, setShowFilters] = useState(false);
     const [formattedData, setFormattedData] = useState<any[]>([]);
-    const [isFiltering, setIsFiltering] = useState(false);
     const [debouncedParams, setDebouncedParams] = useState({ filters, sort, page: pagination.currentPage, });
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -97,11 +96,9 @@ export default function OrgPage({ pathname }: { pathname: string }) {
         setSort(newSort);
     };
 
-    // Debounce filter changes
     useEffect(() => {
         const timer = setTimeout(() => {
             onFilterChange(filters);
-            setIsFiltering(false);
         }, 300);
 
         return () => clearTimeout(timer);
@@ -129,12 +126,10 @@ export default function OrgPage({ pathname }: { pathname: string }) {
     }, [data]);
 
     const handleFilterChange = (field: string, value: any) => {
-        setIsFiltering(true);
         setFilters(prev => ({ ...prev, [field]: value || undefined }));
     };
 
     const handleRemoveFilter = (field: string) => {
-        setIsFiltering(true);
         setFilters(prev => {
             const newFilters = { ...prev };
             delete newFilters[field];
@@ -180,12 +175,15 @@ export default function OrgPage({ pathname }: { pathname: string }) {
 
     const renderSortIcon = (field: string) => {
         if (!sort || sort.field !== field) {
-            return <i className="bi bi-arrow-down-up ms-2 text-muted"></i>;
+            return <i className="align-middle ms-2" data-feather="chevron-down"></i>;
         }
-        return sort.direction === 'asc' ?
-            <i className="bi bi-arrow-up ms-2"></i> :
-            <i className="bi bi-arrow-down ms-2"></i>;
+        return sort.direction === 'asc' ? (
+            <i className="align-middle ms-2" data-feather="chevron-up"></i>
+        ) : (
+            <i className="align-middle ms-2" data-feather="chevron-down"></i>
+        );
     };
+
 
     const renderPagination = () => {
         const { currentPage, totalPages } = pagination;
@@ -245,14 +243,11 @@ export default function OrgPage({ pathname }: { pathname: string }) {
         if (activeFilters.length === 0) return null;
 
         return (
-            <div className="mb-3 d-flex flex-wrap gap-2">
+            <div className="d-flex flex-wrap gap-2">
                 {activeFilters.map(([field, value]) => {
                     const filterOption = filterOptions?.find(f => f.field === field);
                     const label = filterOption?.label || field;
-                    const displayValue = filterOption?.type === 'select'
-                        ? filterOption.options?.find(o => o.value === value)?.label || value
-                        : value;
-
+                    const displayValue = filterOption?.type === 'select' ? filterOption.options?.find(o => o.value === value)?.label || value : value;
                     return (
                         <span key={field} className="badge bg-primary bg-opacity-10 text-primary p-2 d-flex align-items-center">
                             {label}: {displayValue}
@@ -280,23 +275,15 @@ export default function OrgPage({ pathname }: { pathname: string }) {
             )}
 
 
-            <div className="card flex-fill w-100 mt-2">
-                <div className="card-header py-2">
+            <div className="card flex-fill w-100 h-100 d-flex flex-column m-">
+                <div className="card-header py-2 ">
                     <div className="align-items-end d-flex justify-content-between">
-                        <h5 className="card-title mb-0">Müşteri Listesi</h5>
+                        <h5 className="card-title mb-0">{pageTitle}</h5>
                         <div className="float-end">
                             <form className="row g-2">
-
-                                {/* {filterOptions?.map((filter, index) => (
-                                    <div key={index} className="col-auto">
-                                        <label className="form-label small fw-medium">{filter.label}</label>
-                                        {renderFilterInput(filter)}
-                                    </div>
-                                ))} */}
-
-                                {renderSelectedFilters()}
-
-
+                                <div className="col-auto">
+                                    {renderSelectedFilters()}
+                                </div>
                                 <div className="col-auto">
                                     <input type="text" className="form-control form-control-sm bg-light rounded-2 border-0" style={{ width: 200 }} placeholder="Search.." />
                                 </div>
@@ -307,33 +294,44 @@ export default function OrgPage({ pathname }: { pathname: string }) {
                         </div>
                     </div>
                 </div>
-                <div className="card-body py-2">
-                    <table className="table table-striped table-hover" style={{ width: '100%', cursor: 'pointer' }}>
-                        <thead className="table-light">
-                            <tr>
-                                {columns.map((column, index) => (
-                                    <th key={index} onClick={() => column.sortable && handleSort(column.field)} style={{ cursor: column.sortable ? 'pointer' : 'default', fontSize: '0.875rem', fontWeight: 500, whiteSpace: 'nowrap' }} >
-                                        <div className="d-flex align-items-center">
-                                            {column.header}
-                                            {column.sortable && renderSortIcon(column.field)}
-                                        </div>
-                                    </th>
-                                ))}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {formattedData.map((row: any, rowIndex) => (
-                                <tr key={rowIndex}>
-                                    {columns.map((column, colIndex) => (
-                                        <td key={colIndex} style={{ fontSize: '0.875rem', whiteSpace: 'nowrap' }}       >
-                                            {column.render ? column.render(row[column.field], row) : row[column.field]}
-                                        </td>
+                <div className="card-body py-2 flex-grow-1 d-flex flex-column">
+                    {formattedData.length === 0 ? (
+                        <div className="d-flex justify-content-center align-items-center h-100">
+                            <h5 className="text-muted">Veri bulunamadı</h5>
+                        </div>
+                    ) : (
+                        <div className="table-responsive flex-grow-1">
+                            <table className="table table-striped table-hover" style={{ width: '100%', cursor: 'pointer' }}>
+                                <thead className="table-light">
+                                    <tr>
+                                        {columns.map((column, index) => (
+                                            <th key={index}
+                                                onClick={() => column.sortable && handleSort(column.field)}
+                                                style={{ cursor: column.sortable ? 'pointer' : 'default', whiteSpace: 'nowrap' }}
+                                            >
+                                                <div className="d-flex align-items-center">
+                                                    {column.header}
+                                                    {column.sortable && renderSortIcon(column.field)}
+                                                </div>
+                                            </th>
+                                        ))}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {formattedData.map((row: any, rowIndex) => (
+                                        <tr key={rowIndex}>
+                                            {columns.map((column, colIndex) => (
+                                                <td key={colIndex} style={{ fontSize: '0.875rem', whiteSpace: 'nowrap' }}>
+                                                    {column.render ? column.render(row[column.field], row) : row[column.field]}
+                                                </td>
+                                            ))}
+                                        </tr>
                                     ))}
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                    <div className="card-footer bg-transparent border-0 d-flex flex-column-reverse flex-md-row justify-content-between align-items-center py-3 gap-2">
+                                </tbody>
+                            </table>
+                        </div>
+                    )}
+                    <div className="card-footer bg-transparent border-0 d-flex flex-column-reverse flex-md-row justify-content-between align-items-center py-3 gap-2 mt-auto">
                         <small className="text-muted text-center text-md-start w-100 w-md-auto">
                             {pagination.totalCount > 0
                                 ? `${(pagination.currentPage - 1) * pagination.pageSize + 1} - ${Math.min(pagination.currentPage * pagination.pageSize, pagination.totalCount)} of ${pagination.totalCount} records`
@@ -349,25 +347,27 @@ export default function OrgPage({ pathname }: { pathname: string }) {
 
             <div className="offcanvas offcanvas-end" tabIndex={-1} id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
                 <div className="offcanvas-header border-bottom  ">
-                    <span className="card-title mb-0">Offcanvas right</span>
+                    <span className="card-title mb-0">{pageTitle}</span>
                     <button type="button" className="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                 </div>
                 <div className="offcanvas-body">
                     <div>
-                        <div className="input-group mb-2">
-                            <span className="input-group-text" style={{ width: '80px' }}>Email</span>
-                            <input
-                                type="text"
-                                name="email"
-                                className="form-control"
-                            />
-                            <button
-                                type="button"
-                                className="input-group-text"
-                            >
-                                <i className="align-middle" data-feather="x"></i>
-                            </button>
+                        {filterOptions?.map((filter, index) => (
+                            <div key={index} className="input-group mb-2">
+                                <span className="input-group-text" style={{ width: '100px' }}>{filter.label}</span>
+                                {renderFilterInput(filter)}
+                                <button type="button" className="input-group-text"   >
+                                    <i className="align-middle" data-feather="x"></i>
+                                </button>
+                            </div>
+                        ))}
+
+                        <div className='gap-2'>
+                            <button className="btn btn-secondary w-75"><i className="fas fa-check"></i> Uygula</button>
+                            <button className="btn btn-danger w-25"><i className="fas fa-times"></i> Temizle</button>
                         </div>
+
+
                     </div>
                 </div>
 

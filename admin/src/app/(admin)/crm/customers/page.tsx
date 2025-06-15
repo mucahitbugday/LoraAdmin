@@ -40,8 +40,8 @@ export default function CustomersPage() {
     return (
 
         <>
-            <PageListTable pathname={'admin/users'} />
-
+            <PageListTable pathname={'/admin/users'} pageTitle='Müşteri Listesi' />
+            {/* 
 
             <div className="card flex-fill w-100 mt-2">
                 <div className="card-header py-2">
@@ -54,7 +54,6 @@ export default function CustomersPage() {
                                     <input type="text" className="form-control form-control-sm bg-light rounded-2 border-0" style={{ width: 200 }} placeholder="Search.." value={search} onChange={(e) => setSearch(e.target.value)} />
                                 </div>
                                 <div className="col-auto">
-                                    {/* <button type='button' onClick={handleOpenFilter}>Filtre</button> */}
                                     <button className="btn btn-primary btn-sm " type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">Filtre</button>
                                 </div>
                             </form>
@@ -103,6 +102,7 @@ export default function CustomersPage() {
                 </div>
                 <div className="offcanvas-body">
                     <div>
+
                         <div className="input-group mb-2">
                             <span className="input-group-text" style={{ width: '80px' }}>Email</span>
                             <input type="text" className="form-control" value={filterData.email || ''} onChange={handleMainInputChange} />
@@ -111,8 +111,8 @@ export default function CustomersPage() {
                             </button>
                         </div>
                     </div>
-                </div>
-            </div>
+        </div >
+                </div> */}
         </>
 
     )
