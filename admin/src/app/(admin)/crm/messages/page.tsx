@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
 interface User {
     name: string;
@@ -19,6 +19,7 @@ interface Message {
 const ChatCard: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [newMessage, setNewMessage] = useState('');
+    const messagesEndRef = useRef<HTMLDivElement>(null);
 
     // Mock current user data
     const currentUser: User = {
@@ -90,6 +91,16 @@ const ChatCard: React.FC = () => {
         }
     ]);
 
+    // Function to scroll to bottom
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    };
+
+    // Scroll to bottom when messages change
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages]);
+
     // Active chat is the first contact by default
     const [activeChat, setActiveChat] = useState<User>(contacts[2]);
 
@@ -110,6 +121,7 @@ const ChatCard: React.FC = () => {
             };
             messages.push(newMsg);
             setNewMessage('');
+            scrollToBottom();
         }
     };
 
@@ -121,11 +133,11 @@ const ChatCard: React.FC = () => {
     };
 
     return (
-        <div className="card">
-            <div className="card-body">
-                <div className="row g-0">
+        <div className="card h-100">
+            <div className="card-body h-100 p-0">
+                <div className="row g-0 h-100">
                     {/* Contacts Sidebar */}
-                    <div className="col-12 col-lg-5 col-xl-3 border-end list-group">
+                    <div className="col-12 col-lg-5 col-xl-3 border-end list-group h-100 overflow-auto">
                         <div className="px-4 d-none d-md-block">
                             <div className="d-flex align-items-center">
                                 <div className="flex-grow-1">
@@ -173,7 +185,7 @@ const ChatCard: React.FC = () => {
                     </div>
 
                     {/* Chat Area */}
-                    <div className="col-12 col-lg-7 col-xl-9">
+                    <div className="col-12 col-lg-7 col-xl-9 d-flex flex-column h-100">
                         {/* Chat Header */}
                         <div className="py-2 px-4 border-bottom d-none d-lg-block">
                             <div className="d-flex align-items-center py-1">
@@ -214,8 +226,8 @@ const ChatCard: React.FC = () => {
                         </div>
 
                         {/* Chat Messages */}
-                        <div className="position-relative">
-                            <div className="chat-messages p-4">
+                        <div className="position-relative flex-grow-1 overflow-auto">
+                            <div className="chat-messages p-4" style={{ maxHeight: 'calc(100vh - 240px)' }}>
                                 {messages.map((message, index) => (
                                     <div key={index} className={`chat-message-${message.isOwn ? 'right' : 'left'} pb-4`}>
                                         <div>
@@ -228,12 +240,13 @@ const ChatCard: React.FC = () => {
                                             />
                                             <div className="text-muted small text-nowrap mt-2">{message.timestamp}</div>
                                         </div>
-                                        <div className={`flex-shrink-1 bg-light rounded py-2 px-3 ${message.isOwn ? 'me-3' : 'ms-3'}`}>
+                                        <div className={`flex-shrink-1 bg-light rounded py-2 px-3 ${message.isOwn ? 'me-3' : 'ms-3'}`} style={{ maxWidth: '80%' }}>
                                             <div className="font-weight-bold mb-1">{message.isOwn ? 'You' : message.sender.name}</div>
                                             {message.content}
                                         </div>
                                     </div>
                                 ))}
+                                <div ref={messagesEndRef} />
                             </div>
                         </div>
 
