@@ -32,7 +32,7 @@ export default function DropzoneComponent({ initialImage, onImageChange }: Dropz
     });
 
     return (
-        <div {...getRootProps()} className="dropzone" style={{ 
+        <div {...getRootProps()} className="dropzone" style={{
             border: '2px dashed #ccc',
             borderRadius: '4px',
             padding: '10px',
@@ -49,23 +49,23 @@ export default function DropzoneComponent({ initialImage, onImageChange }: Dropz
         }}>
             <input {...getInputProps()} />
             {image ? (
-                <div style={{ 
-                    width: '100%', 
-                    height: '100%', 
-                    display: 'flex', 
-                    alignItems: 'center', 
+                <div style={{
+                    width: '100%',
+                    height: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
                     justifyContent: 'center',
                     overflow: 'hidden'
                 }}>
-                    <img 
-                        src={image} 
-                        alt="Preview" 
-                        style={{ 
+                    <img
+                        src={image}
+                        alt="Preview"
+                        style={{
                             maxWidth: '100%',
                             maxHeight: '160px',
                             objectFit: 'contain',
                             borderRadius: '4px'
-                        }} 
+                        }}
                     />
                 </div>
             ) : (
@@ -86,25 +86,12 @@ export default function DropzoneComponent({ initialImage, onImageChange }: Dropz
                         justifyContent: 'center',
                         marginBottom: '0.5rem'
                     }}>
-                        <svg
-                            width="20"
-                            height="20"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                        >
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                            <polyline points="17 8 12 3 7 8" />
-                            <line x1="12" y1="3" x2="12" y2="15" />
-                        </svg>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" >     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />     <polyline points="17 8 12 3 7 8" />     <line x1="12" y1="3" x2="12" y2="15" /> </svg>
                     </div>
                     {isDragActive ? (
-                        <p className="mb-0" style={{fontSize: '0.95rem'}}>Resmi buraya bırakın...</p>
+                        <p className="mb-0" style={{ fontSize: '0.95rem' }}>Resmi buraya bırakın...</p>
                     ) : (
-                        <p className="mb-0" style={{fontSize: '0.95rem'}}>Resmi sürükleyip bırakın veya tıklayarak seçin</p>
+                        <p className="mb-0" style={{ fontSize: '0.95rem' }}>Resmi sürükleyip bırakın veya tıklayarak seçin</p>
                     )}
                 </div>
             )}

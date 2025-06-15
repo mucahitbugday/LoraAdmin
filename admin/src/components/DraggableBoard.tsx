@@ -20,7 +20,7 @@ interface ColumnChange {
     targetColumn: Column;
 }
 
-interface DraggableBoardProps {
+interface KanbanPageProps {
     initialColumns: Column[];
     onColumnChange?: (change: ColumnChange) => void;
     onOpenItemModal?: (task: Task) => void;
@@ -28,7 +28,7 @@ interface DraggableBoardProps {
     renderItemContent?: (task: Task) => React.ReactNode;
 }
 
-export const DraggableBoard: React.FC<DraggableBoardProps> = ({
+export const KanbanPage: React.FC<KanbanPageProps> = ({
     initialColumns,
     onColumnChange,
     onOpenItemModal,
