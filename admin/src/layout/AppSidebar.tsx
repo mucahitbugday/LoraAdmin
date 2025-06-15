@@ -75,7 +75,15 @@ export default function AppSidebar() {
         }
     ];
 
-    const subMenu = pathname.split('/')[1] || '/'
+
+    const isPathActive = (path: string) => {
+        console.log('pathname',pathname)
+        if (!path) return false;
+        if (path === '/') {
+            return pathname === '/';
+        }
+        return pathname.startsWith(path);
+    };
 
     const renderSidebarItems = (
         <>
@@ -88,11 +96,11 @@ export default function AppSidebar() {
                     {item.setupMenu.map((menuItem, index) => {
                         const hasSubMenu = !!menuItem.setupSubMenu;
                         const collapseId = `collapse-${item.module}-${index}`;
-                        const isActive = subMenu === menuItem.path;
+                        const isActive = isPathActive(menuItem.path || '');
 
                         if (hasSubMenu) {
                             const isSubActive = menuItem.setupSubMenu.some(
-                                (subItem) => subItem.path === pathname
+                                (subItem) => isPathActive(subItem.path || '')
                             );
 
                             return (
@@ -113,7 +121,7 @@ export default function AppSidebar() {
                                     >
                                         {menuItem.setupSubMenu.map((subItem) => (
                                             <li
-                                                className={`sidebar-item ${pathname === subItem.path ? 'active' : ''}`}
+                                                className={`sidebar-item ${isPathActive(subItem.path || '') ? 'active' : ''}`}
                                                 key={subItem.label}
                                             >
                                                 <a className="sidebar-link" href={subItem.path}>
