@@ -4,6 +4,7 @@ import { Column } from '@/components/DraggableBoard';
 import { KanbanPage } from '@/components/KanbanPage';
 import { usePathname } from 'next/navigation';
 import React, { useState } from 'react'
+import KanbanColumnModal from './KanbanColumnModal';
 
 export default function page() {
     const pathname = usePathname();
@@ -62,27 +63,8 @@ export default function page() {
         console.log('Kolon değiştirildi');
     };
 
-    const handleAddColumn = () => {
-        const newCol: Column = {
-            ColumnID: `col-${columns.length + 1}`,
-            ColumnName: '',
-            ColumnDescription: '',
-            ColumnStatus: 'active',
-            Tasks: []
-        };
-        setColumns([...columns, newCol]);
-    };
-
-    const handleDeleteColumn = (columnId: string) => {
-        setColumns(columns.filter(col => col.ColumnID !== columnId));
-    };
-
-    const handleColumnUpdate = (columnId: string, field: string, value: string) => {
-        setColumns(columns.map(col =>
-            col.ColumnID === columnId
-                ? { ...col, [field]: value }
-                : col
-        ));
+    const handleColumnsUpdate = (updatedColumns: Column[]) => {
+        setColumns(updatedColumns);
     };
 
     const getStatusBadgeClass = (status: string) => {
@@ -123,13 +105,13 @@ export default function page() {
 
     return (
         <div className="container-fluid p-0">
-
-
             <div className="card flex-fill w-100 mt-2">
                 <div className="card-header py-2">
                     <div className="align-items-end d-flex justify-content-between">
                         <div className="float-end">
-                            <button type='button' className="btn btn-outline-primary btn-sm rounded-2" data-bs-toggle="modal" data-bs-target="#CanbanColonAdd"><i className="fas fa-plus"></i> Kolon Ekle</button>
+                            <button type='button' className="btn btn-outline-primary btn-sm rounded-2" data-bs-toggle="modal" data-bs-target="#CanbanColonAdd">
+                                <i className="fas fa-plus"></i> Kolon Ekle
+                            </button>
                         </div>
                         <div className="float-end">
                             <form className="row g-2">
@@ -139,7 +121,6 @@ export default function page() {
                                 <div className="col-auto">
                                     <input type="date" className="form-control form-control-sm bg-light rounded-2 border-0" style={{ width: 100 }} placeholder="Search.." />
                                 </div>
-
                                 <div className="col-auto">
                                     <input type="text" className="form-control form-control-sm bg-light rounded-2 border-0" style={{ width: 100 }} placeholder="Search.." />
                                 </div>
@@ -153,77 +134,10 @@ export default function page() {
                 <KanbanPage initialColumns={columns} onColumnChange={handleColumnChange} renderItemContent={renderItemContent} />
             )}
 
-
-            <div className="modal fade" id="CanbanColonAdd" tabIndex={-1} style={{ display: 'none' }} aria-hidden="true">
-                <div className="modal-dialog modal-lg" role="document">
-                    <div className="modal-content">
-                        <div className="modal-header">
-                            <h5 className="modal-title">Kanban Kolon Yönetimi</h5>
-                            <div>
-                                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                        </div>
-                        <div className="modal-body">
-                            <div className="table-responsive">
-                                <div className="d-flex justify-content-end" >
-                                    <button type="button" className="btn btn-primary btn-sm me-2" onClick={handleAddColumn} ><i className="fas fa-plus"></i> Yeni Kolon</button>
-                                </div>
-                                <table className="table table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th>Kolon Adı</th>
-                                            <th>Açıklama</th>
-                                            <th>Durum</th>
-                                            <th>İşlemler</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {columns.map((column) => (
-                                            <tr key={column.ColumnID}>
-                                                <td>
-                                                    <input
-                                                        type="text"
-                                                        className="form-control form-control-sm"
-                                                        value={column.ColumnName}
-                                                        onChange={(e) => handleColumnUpdate(column.ColumnID, 'ColumnName', e.target.value)}
-                                                    />
-                                                </td>
-                                                <td>
-                                                    <input
-                                                        type="text"
-                                                        className="form-control form-control-sm"
-                                                        value={column.ColumnDescription}
-                                                        onChange={(e) => handleColumnUpdate(column.ColumnID, 'ColumnDescription', e.target.value)}
-                                                    />
-                                                </td>
-                                                <td>
-                                                    <select
-                                                        className="form-select form-select-sm"
-                                                        value={column.ColumnStatus}
-                                                        onChange={(e) => handleColumnUpdate(column.ColumnID, 'ColumnStatus', e.target.value)}
-                                                    >
-                                                        <option value="active">Aktif</option>
-                                                        <option value="inactive">Pasif</option>
-                                                    </select>
-                                                </td>
-                                                <td>
-                                                    <button type="button" className="btn btn-outline-danger btn-sm" onClick={() => handleDeleteColumn(column.ColumnID)}  ><i className="fas fa-trash"></i></button>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        <div className="modal-footer">
-                            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-
+            <KanbanColumnModal 
+                columns={columns} 
+                onColumnsUpdate={handleColumnsUpdate} 
+            />
         </div>
-
     )
 }
