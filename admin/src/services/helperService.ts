@@ -1,4 +1,6 @@
 import { getCookie, setCookie, deleteCookie } from 'cookies-next';
+import { FilterOption, KanbanPageDataRequest, KanbanPageDataResponse, MenuFilterListRequest, MenuFilterListResponse, MenuPageFiltersRequest } from './models/helperModel';
+import api from './apiService';
 
 const COOKIE_OPTIONS = {
     sameSite: 'strict' as const,
@@ -49,4 +51,26 @@ export const cookieService = {
         this.removeRefreshToken();
         this.removeUserData();
     }
-}; 
+};
+
+
+
+export const menuService = {
+
+    async getMenuFilterList(req: MenuFilterListRequest): Promise<MenuFilterListResponse> {
+        const response = await api.post<MenuFilterListResponse>('/helper/menu-filter-list', req);
+        return response.data;
+    },
+
+    async getMenuPageFilters(req: MenuPageFiltersRequest): Promise<FilterOption[]> {
+        const response = await api.post<FilterOption[]>('/helper/menu-page-filters', req);
+        return response.data;
+    },
+
+    async getKanbanPageData(req: KanbanPageDataRequest): Promise<KanbanPageDataResponse[]> {
+        const response = await api.post<KanbanPageDataResponse[]>('/helper/kanban-page-data', req);
+        return response.data;
+    },
+
+
+}

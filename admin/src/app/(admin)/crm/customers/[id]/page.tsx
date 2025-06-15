@@ -20,12 +20,12 @@ export default function CustomerDetailPage({ params }: { params: Promise<{ id: s
     const [image, setImage] = useState<string | null>(null);
 
     useEffect(() => {
-        if(id == 'new')
-        {
+        if (id == 'new') {
             setCustomerData({
                 id: 0,
                 name: '',
                 surname: '',
+                image: '',
                 email: '',
                 phone: '',
                 address: '',

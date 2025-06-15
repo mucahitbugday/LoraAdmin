@@ -1,13 +1,23 @@
 'use client'
 
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import React, { useState } from 'react'
 import { customers } from '@/data'
 import type { Customer } from '@/models/Customer';
+import PageListTable from '@/components/PageListTable';
 
 export default function CustomersPage() {
+    const pathname = usePathname();
     const router = useRouter();
     const [search, setSearch] = useState('');
+    const [filterData, setFilterData] = useState<any>({
+        email: ''
+    })
+
+    const handleMainInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        const { name, value } = e.target;
+        setFilterData((prev: any) => prev ? { ...prev, [name]: value } : prev);
+    };
 
     const filteredData = customers.filter((customer: Customer) =>
         customer.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -30,6 +40,9 @@ export default function CustomersPage() {
     return (
 
         <>
+            <PageListTable pathname={'admin/users'} />
+
+
             <div className="card flex-fill w-100 mt-2">
                 <div className="card-header py-2">
                     <div className="align-items-end d-flex justify-content-between">
@@ -84,14 +97,19 @@ export default function CustomersPage() {
             </div>
 
             <div className="offcanvas offcanvas-end" tabIndex={-1} id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
-                <div className="offcanvas-header">
-                    <h5 id="offcanvasRightLabel">Offcanvas right</h5>
+                <div className="offcanvas-header border-bottom  ">
+                    <span className="card-title mb-0">Offcanvas right</span>
                     <button type="button" className="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                 </div>
                 <div className="offcanvas-body">
                     <div>
-                        Some text as placeholder. In real life you can have the elements you have chosen. Like, text, images, lists,
-                        etc.
+                        <div className="input-group mb-2">
+                            <span className="input-group-text" style={{ width: '80px' }}>Email</span>
+                            <input type="text" className="form-control" value={filterData.email || ''} onChange={handleMainInputChange} />
+                            <button type='button' className="input-group-text" onClick={() => { filterData.email = '' }}>
+                                <i className="align-middle" data-feather="x"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
