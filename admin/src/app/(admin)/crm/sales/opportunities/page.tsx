@@ -1,10 +1,10 @@
 'use client'
 
 import { Column, KanbanPage } from '@/components/KanbanPage';
+import KanbanColumnModal from '@/components/Modal/KanbanColumnModal';
 import { usePathname } from 'next/navigation';
 import React, { useState, useMemo, useEffect } from 'react'
-import KanbanColumnModal from './KanbanColumnModal';
-
+ 
 const data = [
     {
         "ColumnID": "col-1",
