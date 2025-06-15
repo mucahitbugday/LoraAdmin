@@ -3,7 +3,7 @@
 import { Column } from '@/components/DraggableBoard';
 import { KanbanPage } from '@/components/KanbanPage';
 import { usePathname } from 'next/navigation';
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import KanbanColumnModal from './KanbanColumnModal';
 
 const data = [
@@ -60,12 +60,13 @@ const data = [
 export default function page() {
     const pathname = usePathname();
     const [columns, setColumns] = useState<Column[]>(data);
+    const [activeColumns, setActiveColumns] = useState<Column[]>([]);
 
-    // Sadece aktif kolonları filtrele
-    const activeColumns = useMemo(() => {
-        console.log('çalıştı', columns.filter(col => col.ColumnStatus))
-        return columns.filter(col => col.ColumnStatus);
-    }, [columns]);
+    useEffect(() => {
+        const tmp = columns.filter(x => x.ColumnStatus == true)
+        console.log('tmp',tmp)
+        setActiveColumns(tmp);
+    }, []);
 
     const handleColumnChange = (change: any) => {
         console.log('Kolon değiştirildi');
@@ -138,6 +139,8 @@ export default function page() {
                     </div>
                 </div>
             </div>
+
+            {JSON.stringify(activeColumns)}
 
             {activeColumns && (
                 <KanbanPage initialColumns={activeColumns} onColumnChange={handleColumnChange} renderItemContent={renderItemContent} />
