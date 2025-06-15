@@ -28,7 +28,7 @@ interface DraggableBoardProps {
     renderItemContent?: (task: Task) => React.ReactNode;
 }
 
-export const DraggableBoard: React.FC<DraggableBoardProps> = ({
+export const KanbanPage: React.FC<DraggableBoardProps> = ({
     initialColumns,
     onColumnChange,
     onOpenItemModal,
@@ -108,12 +108,12 @@ export const DraggableBoard: React.FC<DraggableBoardProps> = ({
     };
 
     return (
-        <div className="d-flex overflow-auto" style={{ minHeight: "calc(100vh - 100px)" }}>
+        <div className="d-flex overflow-auto">
             {columns.map(column => (
                 <div key={column.ColumnID} className="flex-shrink-0 me-3" style={{ width: "300px" }}>
                     <div className="card h-100">
-                        <div className="card-header pb-0 d-flex justify-content-between align-items-center" style={{ backgroundColor: '#f8f9fa', borderBottom: '1px solid #edf2f7' }}>
-                            <h5 className="card-title mb-0" style={{ fontSize: '0.95rem', color: '#4a5568', fontWeight: '600' }}>
+                        <div className="card-header py-2 d-flex justify-content-between align-items-center" style={{ backgroundColor: '#222e3c', borderBottom: '1px solid #edf2f7' }}>
+                            <h5 className="card-title mb-0" style={{ fontSize: '0.95rem', color: '#fff', fontWeight: '600' }}>
                                 {column.ColumnName}
                             </h5>
                             <button className="btn btn-light btn-sm rounded-circle" style={{ width: '24px', height: '24px', padding: 0 }} onClick={onAddItemModal} onMouseOver={(e) => { e.currentTarget.style.backgroundColor = '#edf2f7'; e.currentTarget.style.color = '#2d3748'; }} onMouseOut={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = '#718096'; }}>
@@ -123,14 +123,11 @@ export const DraggableBoard: React.FC<DraggableBoardProps> = ({
                         <div className="card-body d-flex flex-column justify-content-between p-2">
                             <div id={`tasks-${column.ColumnID}`} className={`rounded p-2 flex-grow-1 ${dragOverColumn === column.ColumnID ? 'bg-primary bg-opacity-10' : ''}`} style={{ minHeight: '200px', transition: 'all 0.2s ease', overflowY: 'auto', backgroundColor: '#ffffff' }} onDragOver={(e) => handleDragOver(e, column.ColumnID)} onDragLeave={handleDragLeave} onDrop={(e) => handleDrop(e, column.ColumnID)} >
                                 {column.Tasks.map(task => (
-                                    <div key={task.TaskID} className={`card mb-3 ${dragging && dragItem.current === task.TaskID ? 'opacity-50' : ''}`} draggable onDragStart={(e) => handleDragStart(e, task.TaskID, column.ColumnID)} style={{ cursor: 'grab', transform: dragging && dragItem.current === task.TaskID ? 'scale(1.02)' : 'scale(1)', transition: 'all 0.2s ease', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', border: '1px solid #edf2f7', backgroundColor: '#ffffff' }} onClick={() => onOpenItemModal?.(task)}>
+                                    <div key={task.TaskID} className={`card mb-3 ${dragging && dragItem.current === task.TaskID ? 'opacity-50' : ''}`} draggable onDragStart={(e) => handleDragStart(e, task.TaskID, column.ColumnID)} style={{ cursor: 'all-scroll', transform: dragging && dragItem.current === task.TaskID ? 'scale(1.02)' : 'scale(1)', transition: 'all 0.2s ease', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', border: '1px solid #edf2f7', backgroundColor: '#ffffff' }} onClick={() => onOpenItemModal?.(task)}>
                                         <div className="card-body p-3">
                                             {renderItemContent ? (
                                                 renderItemContent(task)
-                                            ) : (
-                                                <>
-                                                </>
-                                            )}
+                                            ) : (<></>)}
                                         </div>
                                     </div>
                                 ))}
@@ -139,6 +136,7 @@ export const DraggableBoard: React.FC<DraggableBoardProps> = ({
                     </div>
                 </div>
             ))}
+
         </div>
     );
 };

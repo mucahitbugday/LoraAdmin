@@ -28,7 +28,7 @@ interface KanbanPageProps {
     renderItemContent?: (task: Task) => React.ReactNode;
 }
 
-export const KanbanPage: React.FC<KanbanPageProps> = ({
+export const DraggableBoard: React.FC<KanbanPageProps> = ({
     initialColumns,
     onColumnChange,
     onOpenItemModal,
@@ -123,7 +123,7 @@ export const KanbanPage: React.FC<KanbanPageProps> = ({
                         <div className="card-body d-flex flex-column justify-content-between p-2">
                             <div id={`tasks-${column.ColumnID}`} className={`rounded p-2 flex-grow-1 ${dragOverColumn === column.ColumnID ? 'bg-primary bg-opacity-10' : ''}`} style={{ minHeight: '200px', transition: 'all 0.2s ease', overflowY: 'auto', backgroundColor: '#ffffff' }} onDragOver={(e) => handleDragOver(e, column.ColumnID)} onDragLeave={handleDragLeave} onDrop={(e) => handleDrop(e, column.ColumnID)} >
                                 {column.Tasks.map(task => (
-                                    <div key={task.TaskID} className={`card mb-3 ${dragging && dragItem.current === task.TaskID ? 'opacity-50' : ''}`} draggable onDragStart={(e) => handleDragStart(e, task.TaskID, column.ColumnID)} style={{ cursor: 'grab', transform: dragging && dragItem.current === task.TaskID ? 'scale(1.02)' : 'scale(1)', transition: 'all 0.2s ease', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', border: '1px solid #edf2f7', backgroundColor: '#ffffff' }} onClick={() => onOpenItemModal?.(task)}>
+                                    <div key={task.TaskID} className={`card mb-3 ${dragging && dragItem.current === task.TaskID ? 'opacity-50' : ''}`} draggable onDragStart={(e) => handleDragStart(e, task.TaskID, column.ColumnID)} style={{ cursor: 'all-scroll', transform: dragging && dragItem.current === task.TaskID ? 'scale(1.02)' : 'scale(1)', transition: 'all 0.2s ease', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', border: '1px solid #edf2f7', backgroundColor: '#ffffff' }} onClick={() => onOpenItemModal?.(task)}>
                                         <div className="card-body p-3">
                                             {renderItemContent ? (
                                                 renderItemContent(task)

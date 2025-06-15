@@ -1,6 +1,7 @@
 'use client'
 
-import { Column, KanbanPage } from '@/components/DraggableBoard';
+import { Column } from '@/components/DraggableBoard';
+import { KanbanPage } from '@/components/KanbanPage';
 import { usePathname } from 'next/navigation';
 import React from 'react'
 
@@ -55,34 +56,7 @@ export default function page() {
                 }
             ]
         },
-        {
-            "ColumnID": "col-4",
-            "ColumnName": "Kazanıldı",
-            "ColumnDescription": "Başarıyla sonuçlanan satışlar.",
-            "ColumnStatus": "closed",
-            "Tasks": [
-                {
-                    "TaskID": "task-105",
-                    "TaskName": "Omega Mühendislik - Anlaşma Sağlandı",
-                    "TaskDescription": "20.000₺ tutarındaki teklif kabul edildi.",
-                    "TaskStatus": "won"
-                }
-            ]
-        },
-        {
-            "ColumnID": "col-5",
-            "ColumnName": "Kaybedildi",
-            "ColumnDescription": "Olumsuz sonuçlanan fırsatlar burada yer alır.",
-            "ColumnStatus": "closed",
-            "Tasks": [
-                {
-                    "TaskID": "task-106",
-                    "TaskName": "Zeta Gıda - Reddedildi",
-                    "TaskDescription": "Fiyat yüksek bulunduğu için teklif reddedildi.",
-                    "TaskStatus": "lost"
-                }
-            ]
-        }
+
     ]
 
 
@@ -111,7 +85,7 @@ export default function page() {
         const badgeClass = getStatusBadgeClass(task.TaskStatus);
         return (
             <>
-                <div className="float-end me-n2">
+                <div className="float-end me-n2" style={{ cursor: 'context-menu' }}>
                     <i className="fas fa-edit" title="Düzenle"></i>
                 </div>
                 <div className="d-flex flex-column">
@@ -130,6 +104,33 @@ export default function page() {
 
     return (
         <div className="container-fluid p-0">
+
+
+            <div className="card flex-fill w-100 mt-2">
+                <div className="card-header py-2">
+                    <div className="align-items-end d-flex justify-content-between">
+                        <div className="float-end">
+                            <button className="btn btn-outline-success btn-sm rounded-2  "><i className="fas fa-plus"></i> Ekle</button>
+                        </div>
+
+                        <div className="float-end">
+                            <form className="row g-2">
+                                <div className="col-auto">
+                                    <input type="date" className="form-control form-control-sm bg-light rounded-2 border-0" style={{ width: 100 }} placeholder="Search.." />
+                                </div>
+                                <div className="col-auto">
+                                    <input type="date" className="form-control form-control-sm bg-light rounded-2 border-0" style={{ width: 100 }} placeholder="Search.." />
+                                </div>
+                                
+                                <div className="col-auto">
+                                    <input type="text" className="form-control form-control-sm bg-light rounded-2 border-0" style={{ width: 100 }} placeholder="Search.." />
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             {columns && (
                 <KanbanPage initialColumns={columns} onColumnChange={handleColumnChange} renderItemContent={renderItemContent} />
             )}
