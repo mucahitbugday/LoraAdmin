@@ -11,7 +11,7 @@ export default function CrmDashboard() {
 
     return (
         <div className="container-fluid p-0">
-            <div className="row">
+            <div className="row g-3">
                 <div className="col-sm-6 col-xl-3">
                     <div className="card">
                         <div className="card-body">
@@ -22,10 +22,10 @@ export default function CrmDashboard() {
 
                                 <div className="col-auto">
                                     <div className="stat text-primary">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" 
-                                             viewBox="0 0 24 24" fill="none" stroke="currentColor" 
-                                             strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
-                                             className="feather feather-dollar-sign align-middle">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                            strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                                            className="feather feather-dollar-sign align-middle">
                                             <line x1="12" y1="1" x2="12" y2="23"></line>
                                             <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
                                         </svg>
@@ -50,10 +50,10 @@ export default function CrmDashboard() {
 
                                 <div className="col-auto">
                                     <div className="stat text-primary">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" 
-                                             viewBox="0 0 24 24" fill="none" stroke="currentColor" 
-                                             strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
-                                             className="feather feather-shopping-bag align-middle">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                            strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                                            className="feather feather-shopping-bag align-middle">
                                             <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
                                             <line x1="3" y1="6" x2="21" y2="6"></line>
                                             <path d="M16 10a4 4 0 0 1-8 0"></path>
@@ -79,10 +79,10 @@ export default function CrmDashboard() {
 
                                 <div className="col-auto">
                                     <div className="stat text-primary">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" 
-                                             viewBox="0 0 24 24" fill="none" stroke="currentColor" 
-                                             strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
-                                             className="feather feather-activity align-middle">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                            strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                                            className="feather feather-activity align-middle">
                                             <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
                                         </svg>
                                     </div>
@@ -106,10 +106,10 @@ export default function CrmDashboard() {
 
                                 <div className="col-auto">
                                     <div className="stat text-primary">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" 
-                                             viewBox="0 0 24 24" fill="none" stroke="currentColor" 
-                                             strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
-                                             className="feather feather-shopping-cart align-middle">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                            strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                                            className="feather feather-shopping-cart align-middle">
                                             <circle cx="9" cy="21" r="1"></circle>
                                             <circle cx="20" cy="21" r="1"></circle>
                                             <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
@@ -127,7 +127,28 @@ export default function CrmDashboard() {
                 </div>
             </div>
 
-            <div className="row">
+
+            <div className="card g-3">
+                <div className="card-body">
+                    <div className="d-flex justify-content-between">
+                        <div className="d-flex">
+                            <button className="btn btn-outline-primary me-2">Primary</button>
+                            <button className="btn btn-outline-secondary me-2">Secondary</button>
+                            <button className="btn btn-outline-success me-2">Success</button>
+                            <button className="btn btn-outline-danger me-2">Danger</button>
+                            <button className="btn btn-outline-warning me-2">Warning</button>
+                            <button className="btn btn-outline-info me-2">Info</button>
+                        </div>
+                        <div className="d-flex">
+                            <button className="btn btn-outline-primary me-2">Kısayolları Düzenle</button>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div className="row g-3">
                 <div className="col-12 col-lg-8 d-flex">
                     <div className="card flex-fill w-100">
                         <div className="card-header">
@@ -173,7 +194,7 @@ export default function CrmDashboard() {
                                             <option value="1">Şub</option>
                                             <option value="2">Mar</option>
                                             <option value="3">Nis</option>
-                                            
+
                                         </select>
                                     </div>
                                     <div className="col-auto">
@@ -190,15 +211,15 @@ export default function CrmDashboard() {
                 </div>
             </div>
 
-            <div className="card flex-fill">
+            <div className="card g-3">
                 <div className="card-header">
                     <div className="card-actions float-end">
                         <div className="dropdown position-relative">
                             <a href="#" data-bs-toggle="dropdown" data-bs-display="static">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" 
-                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" 
-                                     strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
-                                     className="feather feather-more-horizontal align-middle">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                                    className="feather feather-more-horizontal align-middle">
                                     <circle cx="12" cy="12" r="1"></circle>
                                     <circle cx="19" cy="12" r="1"></circle>
                                     <circle cx="5" cy="12" r="1"></circle>
