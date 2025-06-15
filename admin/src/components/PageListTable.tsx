@@ -1,4 +1,5 @@
 'use client'
+import { usePathname, useRouter } from 'next/navigation';
 import React, { useState, useEffect } from 'react';
 import moment from 'moment';
 import { menuService } from '@/services/helperService';
@@ -20,6 +21,8 @@ export interface TableColumn {
     header: string;
     sortable?: boolean;
     render?: (value: any, row: any) => React.ReactNode;
+    type?: 'text' | 'image' | 'boolean' | 'date';
+    url?: string;
 }
 
 export interface PaginationInfo {
@@ -34,6 +37,8 @@ export interface FilterState {
 }
 
 export default function OrgPage({ pathname, pageTitle }: { pathname: string, pageTitle: string }) {
+    // const pathname = usePathname();
+    const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [data, setData] = useState<any>([]);
     const [pagination, setPagination] = useState<PaginationInfo>({ currentPage: 1, pageSize: 15, totalCount: 1, totalPages: 1 });
@@ -44,6 +49,8 @@ export default function OrgPage({ pathname, pageTitle }: { pathname: string, pag
     const [sort, setSort] = useState<SortOption | null>(null);
     const [formattedData, setFormattedData] = useState<any[]>([]);
     const [debouncedParams, setDebouncedParams] = useState({ filters, sort, page: pagination.currentPage, });
+
+
 
 
     useEffect(() => {
@@ -60,7 +67,31 @@ export default function OrgPage({ pathname, pageTitle }: { pathname: string, pag
                 const pageFiltersResponse = await menuService.getMenuPageFilters({ MenuPath: pathname });
                 setFilterOptions(pageFiltersResponse);
                 setData(response.pageData);
-                setColumns(Object.keys(response?.pageData[0] || {}).map(key => ({ field: key, header: key, sortable: true })));
+
+                // Auto-detect column types
+                const detectedColumns = Object.keys(response?.pageData[0] || {}).map(key => {
+                    const value = response.pageData[0]?.[key];
+                    let type: TableColumn['type'] = 'text';
+                    
+                    if (typeof value === 'boolean') {
+                        type = 'boolean';
+                    } else if (typeof value === 'string') {
+                        if (moment(value, ['YYYY-MM-DD HH:mm:ss.SSS', moment.ISO_8601], true).isValid()) {
+                            type = 'date';
+                        } else if (value.startsWith('http') || value.startsWith('/')) {
+                            type = 'image';
+                        }
+                    }
+                    
+                    return { 
+                        field: key, 
+                        header: key, 
+                        sortable: true,
+                        type
+                    };
+                });
+                
+                setColumns(detectedColumns);
                 setPagination(prev => ({ ...prev, currentPage: debouncedParams.page, totalCount: response.totalCount, totalPages: Math.ceil(response.totalCount / pagination.pageSize) }));
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -111,7 +142,11 @@ export default function OrgPage({ pathname, pageTitle }: { pathname: string, pag
         const formattedData = data.map((row: any) => {
             const formattedRow: any = {};
             Object.entries(row).forEach(([key, value]) => {
-                if (typeof value === 'string' && moment(value, ['YYYY-MM-DD HH:mm:ss.SSS', moment.ISO_8601], true).isValid()) {
+                const column = columns.find(col => col.field === key);
+                if (column?.type === 'image' && value) {
+                    formattedRow[key] = value;
+                }
+                else if (typeof value === 'string' && moment(value, ['YYYY-MM-DD HH:mm:ss.SSS', moment.ISO_8601], true).isValid()) {
                     formattedRow[key] = moment(value).format('DD/MM/YYYY HH:mm');
                 }
                 else if (typeof value === 'boolean') {
@@ -124,7 +159,7 @@ export default function OrgPage({ pathname, pageTitle }: { pathname: string, pag
             return formattedRow;
         });
         setFormattedData(formattedData);
-    }, [data]);
+    }, [data, columns]);
 
     const handleFilterChange = (field: string, value: any) => {
         setTempFilters(prev => ({ ...prev, [field]: value || undefined }));
@@ -223,7 +258,7 @@ export default function OrgPage({ pathname, pageTitle }: { pathname: string, pag
             <nav>
                 <ul className="pagination pagination-sm mb-0">
                     <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
-                        <button className="page-link" onClick={() => onPageChange(currentPage - 1)} disabled={currentPage === 1}   >
+                        <button className="page-link" onClick={() => onPageChange(1)} disabled={currentPage === 1}   >
                             <i className="align-middle" data-feather="chevrons-left"></i>
                         </button>
                     </li>
@@ -245,7 +280,7 @@ export default function OrgPage({ pathname, pageTitle }: { pathname: string, pag
                         </button>
                     </li>
                     <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
-                        <button className="page-link" onClick={() => onPageChange(currentPage + 1)} disabled={currentPage === totalPages}   >
+                        <button className="page-link" onClick={() => onPageChange(totalPages)} disabled={currentPage === totalPages}   >
                             <i className="align-middle" data-feather="chevrons-right"></i>
                         </button>
                     </li>
@@ -282,17 +317,17 @@ export default function OrgPage({ pathname, pageTitle }: { pathname: string, pag
 
     return (
         <>
-            {loading && (
+            {/* {loading && (
                 <div className="position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center bg-white bg-opacity-75" style={{ zIndex: 1050 }}>
                     <div className="spinner-border text-primary" role="status">
                         <span className="visually-hidden">Loading...</span>
                     </div>
                 </div>
-            )}
+            )} */}
 
 
-            <div className="card flex-fill w-100 h-100 d-flex flex-column m-">
-                <div className="card-header py-2 ">
+            <div className="card m-0">
+                <div className="card-header py-2">
                     <div className="align-items-end d-flex justify-content-between">
                         <h5 className="card-title mb-0">{pageTitle}</h5>
                         <div className="float-end">
@@ -304,60 +339,89 @@ export default function OrgPage({ pathname, pageTitle }: { pathname: string, pag
                                     <input type="text" className="form-control form-control-sm bg-light rounded-2 border-0" style={{ width: 200 }} placeholder="Search.." />
                                 </div>
                                 <div className="col-auto">
-                                    <button className="btn btn-primary btn-sm " type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">Filtre</button>
+                                    <button className="btn btn-primary btn-sm" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">Filtre</button>
                                 </div>
                             </form>
                         </div>
                     </div>
                 </div>
-                <div className="card-body py-2 flex-grow-1 d-flex flex-column">
+
+                <div className="card-body p-0 d-flex flex-column flex-grow-1">
                     {formattedData.length === 0 ? (
                         <div className="d-flex justify-content-center align-items-center h-100">
                             <h5 className="text-muted">Veri bulunamadı</h5>
                         </div>
                     ) : (
-                        // <div className="table-responsive flex-grow-1">
-                        <table className="table table-striped table-hover m-0" style={{ width: '100%', cursor: 'pointer' }}>
-                            <thead className="table-light">
-                                <tr>
-                                    {columns.map((column, index) => (
-                                        <th key={index}
-                                            onClick={() => column.sortable && handleSort(column.field)}
-                                            style={{ cursor: column.sortable ? 'pointer' : 'default', whiteSpace: 'nowrap' }}
-                                        >
-                                            <div className="d-flex align-items-center">
-                                                {column.header}
-                                                {column.sortable && renderSortIcon(column.field)}
-                                            </div>
-                                        </th>
-                                    ))}
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {formattedData.map((row: any, rowIndex) => (
-                                    <tr key={rowIndex}>
-                                        {columns.map((column, colIndex) => (
-                                            <td key={colIndex} style={{ fontSize: '0.875rem', whiteSpace: 'nowrap' }}>
-                                                {column.render ? column.render(row[column.field], row) : row[column.field]}
-                                            </td>
+                        <>
+                            <div className="table-responsive flex-grow-1" style={{ overflowY: 'auto' }}>
+                                <table className="table table-striped table-hover m-0" style={{ width: '100%', cursor: 'pointer' }}>
+                                    <thead className="table-light sticky-top" style={{ zIndex: 1 }}>
+                                        <tr>
+                                            {columns.map((column, index) => (
+                                                <th key={index}
+                                                    onClick={() => column.sortable && handleSort(column.field)}
+                                                    style={{ cursor: column.sortable ? 'pointer' : 'default', whiteSpace: 'nowrap' }}
+                                                >
+                                                    <div className="d-flex align-items-center">
+                                                        {column.header}
+                                                        {column.sortable && renderSortIcon(column.field)}
+                                                    </div>
+                                                </th>
+                                            ))}
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {formattedData.map((row: any, rowIndex) => (
+                                            <tr key={rowIndex}>
+                                                {columns.map((column, colIndex) => (
+                                                    <td 
+                                                        key={colIndex} 
+                                                        onClick={() => {
+                                                            if (row['_url']) {
+                                                                router.push(`/${row['_url']}/${row['ID']}`);
+                                                            }
+                                                        }} 
+                                                        style={{ 
+                                                            fontSize: '0.875rem', 
+                                                            whiteSpace: 'nowrap',
+                                                            cursor: row['_url'] ? 'pointer' : 'default'
+                                                        }}
+                                                    >
+                                                        {column.type === 'image' && row[column.field] ? (
+                                                            <img 
+                                                                src={row[column.field]} 
+                                                                width="32" 
+                                                                height="32" 
+                                                                className="rounded-circle my-n1" 
+                                                                alt={column.header}
+                                                                onError={(e) => {
+                                                                    e.currentTarget.src = '/placeholder.png';
+                                                                }}
+                                                            />
+                                                        ) : column.render ? (
+                                                            column.render(row[column.field], row)
+                                                        ) : (
+                                                            row[column.field]
+                                                        )}
+                                                    </td>
+                                                ))}
+                                            </tr>
                                         ))}
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                        // </div>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div className="card-footer bg-transparent border-0 d-flex flex-column-reverse flex-md-row justify-content-between align-items-center py-3 gap-2">
+                                <small className="text-muted text-center text-md-start w-100 w-md-auto">
+                                    {pagination.totalCount > 0
+                                        ? `${(pagination.currentPage - 1) * pagination.pageSize + 1} - ${Math.min(pagination.currentPage * pagination.pageSize, pagination.totalCount)} of ${pagination.totalCount} records`
+                                        : 'No records found'}
+                                </small>
+                                <div className="d-flex justify-content-center justify-content-md-end w-100 w-md-auto mb-2 mb-md-0">
+                                    {renderPagination()}
+                                </div>
+                            </div>
+                        </>
                     )}
-                    <div className="card-footer bg-transparent border-0 d-flex flex-column-reverse flex-md-row justify-content-between align-items-center py-3 gap-2">
-                        <small className="text-muted text-center text-md-start w-100 w-md-auto">
-                            {pagination.totalCount > 0
-                                ? `${(pagination.currentPage - 1) * pagination.pageSize + 1} - ${Math.min(pagination.currentPage * pagination.pageSize, pagination.totalCount)} of ${pagination.totalCount} records`
-                                : 'No records found'}
-                        </small>
-
-                        <div className="d-flex justify-content-center justify-content-md-end w-100 w-md-auto mb-2 mb-md-0">
-                            {renderPagination()}
-                        </div>
-                    </div>
                 </div>
             </div>
 

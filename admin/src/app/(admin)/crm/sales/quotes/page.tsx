@@ -223,6 +223,289 @@ export default function Page() {
 
                 </div>
             </div>
+            <div className="card flex-fill w-100 mt-2">
+                <div className="card-header py-2">
+                    <div className="align-items-end d-flex justify-content-between">
+                        <h5 className="card-title mb-0">Teklifler</h5>
+                        <div className="float-end">
+                            <form className="row g-2">
+                                <div className="col-auto">
+                                    <select className="form-select form-select-sm bg-light border-0">
+                                        <option>Jan</option>
+                                        <option value="1">Feb</option>
+                                        <option value="2">Mar</option>
+                                        <option value="3">Apr</option>
+                                    </select>
+                                </div>
+                                <div className="col-auto">
+                                    <input type="text" className="form-control form-control-sm bg-light rounded-2 border-0" style={{ width: 100 }} placeholder="Search.." />
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div className="card-body py-2">
+
+                    <table className="table table-striped table-hover" style={{ width: '100%', tableLayout: 'fixed', cursor: 'pointer' }}>
+                        <thead className="table-light">
+                            <tr>
+                                <th style={{ width: '5%' }}>#</th>
+                                <th style={{ width: '15%' }}>Teklif No</th>
+                                <th style={{ width: '20%' }}>Müşteri</th>
+                                <th style={{ width: '15%' }}>Tutar</th>
+                                <th style={{ width: '15%' }}>Tarih</th>
+                                <th style={{ width: '15%' }}>Geçerlilik</th>
+                                <th style={{ width: '15%' }}>Durum</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {quotes.map((quote) => (
+                                <tr key={quote.id} onClick={() => router.push(`/crm/sales/quotes/${quote.id}`)} className="align-middle">
+                                    <td>{quote.id}</td>
+                                    <td>{quote.quoteNo}</td>
+                                    <td>
+                                        <img
+                                            src={quote.customerImg}
+                                            width="32"
+                                            height="32"
+                                            className="rounded-circle my-n1"
+                                            style={{ marginRight: 10 }}
+                                            alt="Avatar"
+                                        />
+                                        {quote.customerName}
+                                    </td>
+                                    <td>{quote.amount.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</td>
+                                    <td>{quote.date}</td>
+                                    <td>{quote.validUntil}</td>
+                                    <td>
+                                        <span className={`badge ${getQuoteStatusBadgeClass(quote.status)}`}>
+                                            {quote.status === 'bekliyor'
+                                                ? 'Bekliyor'
+                                                : quote.status === 'onaylandi'
+                                                    ? 'Onaylandı'
+                                                    : 'Reddedildi'}
+                                        </span>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+
+            <div className="card flex-fill w-100 mt-2">
+                <div className="card-header py-2">
+                    <div className="align-items-end d-flex justify-content-between">
+                        <h5 className="card-title mb-0">Teklifler</h5>
+                        <div className="float-end">
+                            <form className="row g-2">
+                                <div className="col-auto">
+                                    <select className="form-select form-select-sm bg-light border-0">
+                                        <option>Jan</option>
+                                        <option value="1">Feb</option>
+                                        <option value="2">Mar</option>
+                                        <option value="3">Apr</option>
+                                    </select>
+                                </div>
+                                <div className="col-auto">
+                                    <input type="text" className="form-control form-control-sm bg-light rounded-2 border-0" style={{ width: 100 }} placeholder="Search.." />
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div className="card-body py-2">
+
+                    <table className="table table-striped table-hover" style={{ width: '100%', tableLayout: 'fixed', cursor: 'pointer' }}>
+                        <thead className="table-light">
+                            <tr>
+                                <th style={{ width: '5%' }}>#</th>
+                                <th style={{ width: '15%' }}>Teklif No</th>
+                                <th style={{ width: '20%' }}>Müşteri</th>
+                                <th style={{ width: '15%' }}>Tutar</th>
+                                <th style={{ width: '15%' }}>Tarih</th>
+                                <th style={{ width: '15%' }}>Geçerlilik</th>
+                                <th style={{ width: '15%' }}>Durum</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {quotes.map((quote) => (
+                                <tr key={quote.id} onClick={() => router.push(`/crm/sales/quotes/${quote.id}`)} className="align-middle">
+                                    <td>{quote.id}</td>
+                                    <td>{quote.quoteNo}</td>
+                                    <td>
+                                        <img
+                                            src={quote.customerImg}
+                                            width="32"
+                                            height="32"
+                                            className="rounded-circle my-n1"
+                                            style={{ marginRight: 10 }}
+                                            alt="Avatar"
+                                        />
+                                        {quote.customerName}
+                                    </td>
+                                    <td>{quote.amount.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</td>
+                                    <td>{quote.date}</td>
+                                    <td>{quote.validUntil}</td>
+                                    <td>
+                                        <span className={`badge ${getQuoteStatusBadgeClass(quote.status)}`}>
+                                            {quote.status === 'bekliyor'
+                                                ? 'Bekliyor'
+                                                : quote.status === 'onaylandi'
+                                                    ? 'Onaylandı'
+                                                    : 'Reddedildi'}
+                                        </span>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+
+            <div className="card flex-fill w-100 mt-2">
+                <div className="card-header py-2">
+                    <div className="align-items-end d-flex justify-content-between">
+                        <h5 className="card-title mb-0">Teklifler</h5>
+                        <div className="float-end">
+                            <form className="row g-2">
+                                <div className="col-auto">
+                                    <select className="form-select form-select-sm bg-light border-0">
+                                        <option>Jan</option>
+                                        <option value="1">Feb</option>
+                                        <option value="2">Mar</option>
+                                        <option value="3">Apr</option>
+                                    </select>
+                                </div>
+                                <div className="col-auto">
+                                    <input type="text" className="form-control form-control-sm bg-light rounded-2 border-0" style={{ width: 100 }} placeholder="Search.." />
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div className="card-body py-2">
+
+                    <table className="table table-striped table-hover" style={{ width: '100%', tableLayout: 'fixed', cursor: 'pointer' }}>
+                        <thead className="table-light">
+                            <tr>
+                                <th style={{ width: '5%' }}>#</th>
+                                <th style={{ width: '15%' }}>Teklif No</th>
+                                <th style={{ width: '20%' }}>Müşteri</th>
+                                <th style={{ width: '15%' }}>Tutar</th>
+                                <th style={{ width: '15%' }}>Tarih</th>
+                                <th style={{ width: '15%' }}>Geçerlilik</th>
+                                <th style={{ width: '15%' }}>Durum</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {quotes.map((quote) => (
+                                <tr key={quote.id} onClick={() => router.push(`/crm/sales/quotes/${quote.id}`)} className="align-middle">
+                                    <td>{quote.id}</td>
+                                    <td>{quote.quoteNo}</td>
+                                    <td>
+                                        <img
+                                            src={quote.customerImg}
+                                            width="32"
+                                            height="32"
+                                            className="rounded-circle my-n1"
+                                            style={{ marginRight: 10 }}
+                                            alt="Avatar"
+                                        />
+                                        {quote.customerName}
+                                    </td>
+                                    <td>{quote.amount.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</td>
+                                    <td>{quote.date}</td>
+                                    <td>{quote.validUntil}</td>
+                                    <td>
+                                        <span className={`badge ${getQuoteStatusBadgeClass(quote.status)}`}>
+                                            {quote.status === 'bekliyor'
+                                                ? 'Bekliyor'
+                                                : quote.status === 'onaylandi'
+                                                    ? 'Onaylandı'
+                                                    : 'Reddedildi'}
+                                        </span>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+
+            <div className="card flex-fill w-100 mt-2">
+                <div className="card-header py-2">
+                    <div className="align-items-end d-flex justify-content-between">
+                        <h5 className="card-title mb-0">Teklifler</h5>
+                        <div className="float-end">
+                            <form className="row g-2">
+                                <div className="col-auto">
+                                    <select className="form-select form-select-sm bg-light border-0">
+                                        <option>Jan</option>
+                                        <option value="1">Feb</option>
+                                        <option value="2">Mar</option>
+                                        <option value="3">Apr</option>
+                                    </select>
+                                </div>
+                                <div className="col-auto">
+                                    <input type="text" className="form-control form-control-sm bg-light rounded-2 border-0" style={{ width: 100 }} placeholder="Search.." />
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div className="card-body py-2">
+
+                    <table className="table table-striped table-hover" style={{ width: '100%', tableLayout: 'fixed', cursor: 'pointer' }}>
+                        <thead className="table-light">
+                            <tr>
+                                <th style={{ width: '5%' }}>#</th>
+                                <th style={{ width: '15%' }}>Teklif No</th>
+                                <th style={{ width: '20%' }}>Müşteri</th>
+                                <th style={{ width: '15%' }}>Tutar</th>
+                                <th style={{ width: '15%' }}>Tarih</th>
+                                <th style={{ width: '15%' }}>Geçerlilik</th>
+                                <th style={{ width: '15%' }}>Durum</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {quotes.map((quote) => (
+                                <tr key={quote.id} onClick={() => router.push(`/crm/sales/quotes/${quote.id}`)} className="align-middle">
+                                    <td>{quote.id}</td>
+                                    <td>{quote.quoteNo}</td>
+                                    <td>
+                                        <img
+                                            src={quote.customerImg}
+                                            width="32"
+                                            height="32"
+                                            className="rounded-circle my-n1"
+                                            style={{ marginRight: 10 }}
+                                            alt="Avatar"
+                                        />
+                                        {quote.customerName}
+                                    </td>
+                                    <td>{quote.amount.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</td>
+                                    <td>{quote.date}</td>
+                                    <td>{quote.validUntil}</td>
+                                    <td>
+                                        <span className={`badge ${getQuoteStatusBadgeClass(quote.status)}`}>
+                                            {quote.status === 'bekliyor'
+                                                ? 'Bekliyor'
+                                                : quote.status === 'onaylandi'
+                                                    ? 'Onaylandı'
+                                                    : 'Reddedildi'}
+                                        </span>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
 
 
 
