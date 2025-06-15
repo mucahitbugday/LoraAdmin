@@ -4,6 +4,7 @@ import React, { useEffect } from 'react'
 import feather from 'feather-icons';
 import { useSidebar } from '@/context/SidebarContext';
 import { usePathname } from 'next/navigation';
+import Link from 'next/link';
 
 export default function AppSidebar() {
     const { isExpanded } = useSidebar();
@@ -77,7 +78,6 @@ export default function AppSidebar() {
 
 
     const isPathActive = (path: string) => {
-        console.log('pathname',pathname)
         if (!path) return false;
         if (path === '/') {
             return pathname === '/';
@@ -124,9 +124,9 @@ export default function AppSidebar() {
                                                 className={`sidebar-item ${isPathActive(subItem.path || '') ? 'active' : ''}`}
                                                 key={subItem.label}
                                             >
-                                                <a className="sidebar-link" href={subItem.path}>
+                                                <Link className="sidebar-link" href={subItem.path}>
                                                     {subItem.label}
-                                                </a>
+                                                </Link>
                                             </li>
                                         ))}
                                     </ul>
@@ -135,10 +135,10 @@ export default function AppSidebar() {
                         } else {
                             return (
                                 <li className={`sidebar-item ${isActive ? 'active' : ''}`} key={menuItem.label}>
-                                    <a className="sidebar-link" href={menuItem.path}>
+                                    <Link className="sidebar-link" href={menuItem.path}>
                                         <i className="align-middle" data-feather={menuItem.icon}></i>
                                         <span className="align-middle">{menuItem.label}</span>
-                                    </a>
+                                    </Link>
                                 </li>
                             );
                         }
