@@ -1,17 +1,71 @@
 'use client'
 import React from 'react'
 import LineChart from '../Chart/LineChart'
+import StatisticsCard from '../StatisticsCard';
 
 export default function CrmDashboard() {
-
     const monthlyData = {
         labels: ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'],
         data: [2000, 1500, 1600, 1800, 1600, 1800, 2500, 2300, 2500, 3500, 3000, 3300]
     };
 
+    const statisticsData = [
+        {
+            title: "Income",
+            value: "$47,482",
+            change: "3.65%",
+            isPositive: true,
+            icon: (
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-dollar-sign align-middle"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+            )
+        },
+        {
+            title: "Orders",
+            value: "2,542",
+            change: "-5.25%",
+            isPositive: false,
+            icon: (
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-shopping-bag align-middle"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+            )
+        },
+        {
+            title: "Activity",
+            value: "16,300",
+            change: "4.65%",
+            isPositive: true,
+            icon: (
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-activity align-middle"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+            )
+        },
+        {
+            title: "Revenue",
+            value: "$20,120",
+            change: "2.35%",
+            isPositive: true,
+            icon: (
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-shopping-cart align-middle"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+            )
+        }
+    ];
+
     return (
-        <div className="container-fluid p-0">
-            <div className="row g-3">
+        <div className="container-fluid ">
+                 
+                <div className="row">
+                    {statisticsData.map((stat, index) => (
+                        <div key={index} className="col-sm-6 col-xl-3">
+                            <StatisticsCard  {...stat} />
+                        </div>
+                    ))}
+                </div>
+
+
+ 
+
+
+
+
+            {/* <div className="row g-3">
                 <div className="col-sm-6 col-xl-3">
                     <div className="card">
                         <div className="card-body">
@@ -126,8 +180,6 @@ export default function CrmDashboard() {
                     </div>
                 </div>
             </div>
-
-
             <div className="card g-3">
                 <div className="card-body">
                     <div className="d-flex justify-content-between">
@@ -205,8 +257,7 @@ export default function CrmDashboard() {
                             <h5 className="card-title mb-0">İl Bazında Satışlar</h5>
                         </div>
                         <div className="card-body px-4">
-                            {/* Buraya satış verisi veya grafik ekleyebilirsin */}
-                        </div>
+                         </div>
                     </div>
                 </div>
             </div>
@@ -283,7 +334,7 @@ export default function CrmDashboard() {
                         </tr>
                     </tbody>
                 </table>
-            </div>
+            </div> */}
 
         </div>
     )
