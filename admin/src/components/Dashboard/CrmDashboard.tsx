@@ -17,7 +17,7 @@ export default function CrmDashboard() {
                         <div className="card-body">
                             <div className="row">
                                 <div className="col mt-0">
-                                    <h5 className="card-title">Gelir</h5>
+                                    <h5 className="card-title">Gelir 0</h5>
                                 </div>
 
                                 <div className="col-auto">
