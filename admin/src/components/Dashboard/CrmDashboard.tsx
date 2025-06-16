@@ -49,23 +49,48 @@ export default function CrmDashboard() {
     ];
 
     return (
-        <div className="container-fluid ">
-                 
-                <div className="row">
-                    {statisticsData.map((stat, index) => (
-                        <div key={index} className="col-sm-6 col-xl-3">
-                            <StatisticsCard  {...stat} />
+        <div className="container-fluid">
+
+            <div className="row g-3">
+                {statisticsData.map((stat, index) => (
+                    <div key={index} className="col-sm-6 col-xl-3">
+                        <StatisticsCard  {...stat} />
+                    </div>
+                ))}
+            </div>
+
+            <div className="row g-3">
+                <div className="col-12  ">
+                    <div className="card flex-fill w-100">
+                        <div className="card-header">
+                            <div className="float-end">
+                                <form className="row g-2">
+                                    <div className="col-auto">
+                                        <select className="form-select form-select-sm bg-light border-0">
+                                            <option value="0">Tümü</option>
+                                            <option value="1">Satışlar</option>
+                                            <option value="2">Siparişler</option>
+                                        </select>
+                                    </div>
+                                </form>
+                            </div>
+                            <h5 className="card-title mb-0">Aylık Sipariş</h5>
                         </div>
-                    ))}
+                        <div className="card-body pt-2 pb-3">
+                            <div className="chart chart-md">
+                                <LineChart data={monthlyData.data} labels={monthlyData.labels} label="" borderColor="rgb(66, 139, 255)" backgroundColor="rgba(66, 139, 255, 0.1)" height={300} />
+                            </div>
+                        </div>
+                    </div>
                 </div>
+            </div>
 
-
- 
 
 
 
 
             {/* <div className="row g-3">
+                
                 <div className="col-sm-6 col-xl-3">
                     <div className="card">
                         <div className="card-body">

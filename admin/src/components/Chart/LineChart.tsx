@@ -11,14 +11,7 @@ interface LineChartProps {
     height?: number
 }
 
-const LineChart: React.FC<LineChartProps> = ({
-    data,
-    labels,
-    label,
-    borderColor = 'rgb(66, 139, 255)',
-    backgroundColor = 'rgba(66, 139, 255, 0.1)',
-    height = 300
-}) => {
+const LineChart: React.FC<LineChartProps> = ({ data, labels, label, borderColor = 'rgb(66, 139, 255)', backgroundColor = 'rgba(66, 139, 255, 0.1)', height = 300 }) => {
     const chartRef = useRef<HTMLCanvasElement>(null)
     const chartInstance = useRef<Chart | null>(null)
 
@@ -26,7 +19,6 @@ const LineChart: React.FC<LineChartProps> = ({
         if (chartRef.current) {
             const ctx = chartRef.current.getContext('2d')
             if (ctx) {
-                // Destroy existing chart if it exists
                 if (chartInstance.current) {
                     chartInstance.current.destroy()
                 }
