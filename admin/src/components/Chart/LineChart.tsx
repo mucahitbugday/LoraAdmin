@@ -3,15 +3,17 @@ import React, { useEffect, useRef } from 'react'
 import Chart from 'chart.js/auto'
 
 interface LineChartProps {
-    data: number[]
-    labels: string[]
-    label: string
-    borderColor?: string
-    backgroundColor?: string
-    height?: number
+    data: {
+        label: string;
+        data: number[];
+        borderColor: string;
+        backgroundColor: string;
+    }[];
+    labels: string[];
+    height?: number;
 }
 
-const LineChart: React.FC<LineChartProps> = ({ data, labels, label, borderColor = 'rgb(66, 139, 255)', backgroundColor = 'rgba(66, 139, 255, 0.1)', height = 300 }) => {
+const LineChart: React.FC<LineChartProps> = ({ data, labels, height = 300 }) => {
     const chartRef = useRef<HTMLCanvasElement>(null)
     const chartInstance = useRef<Chart | null>(null)
 
@@ -23,26 +25,30 @@ const LineChart: React.FC<LineChartProps> = ({ data, labels, label, borderColor 
                     chartInstance.current.destroy()
                 }
 
-                const gradient = ctx.createLinearGradient(0, 0, 0, height)
-                gradient.addColorStop(0, backgroundColor)
-                gradient.addColorStop(1, 'rgba(66, 139, 255, 0)')
+                const datasets = data.map(dataset => {
+                    const gradient = ctx.createLinearGradient(0, 0, 0, height)
+                    gradient.addColorStop(0, dataset.backgroundColor)
+                    gradient.addColorStop(1, 'rgba(66, 139, 255, 0)')
+
+                    return {
+                        label: dataset.label,
+                        data: dataset.data,
+                        fill: true,
+                        backgroundColor: gradient,
+                        borderColor: dataset.borderColor,
+                        tension: 0.4,
+                        pointRadius: 4,
+                        pointBackgroundColor: '#FFFFFF',
+                        pointBorderColor: dataset.borderColor,
+                        pointBorderWidth: 2
+                    }
+                })
 
                 chartInstance.current = new Chart(ctx, {
                     type: 'line',
                     data: {
                         labels: labels,
-                        datasets: [{
-                            label: label,
-                            data: data,
-                            fill: true,
-                            backgroundColor: gradient,
-                            borderColor: borderColor,
-                            tension: 0.4,
-                            pointRadius: 4,
-                            pointBackgroundColor: '#FFFFFF',
-                            pointBorderColor: borderColor,
-                            pointBorderWidth: 2
-                        }]
+                        datasets: datasets
                     },
                     options: {
                         responsive: true,
@@ -58,9 +64,6 @@ const LineChart: React.FC<LineChartProps> = ({ data, labels, label, borderColor 
                                 grid: {
                                     display: true,
                                     color: 'rgba(0, 0, 0, 0.05)'
-                                },
-                                ticks: {
-                                    stepSize: 1000
                                 }
                             },
                             x: {
@@ -80,7 +83,7 @@ const LineChart: React.FC<LineChartProps> = ({ data, labels, label, borderColor 
                 chartInstance.current = null
             }
         }
-    }, [data, labels, label, borderColor, backgroundColor, height])
+    }, [data, labels, height])
 
     return (
         <canvas ref={chartRef} style={{ height: `${height}px` }}></canvas>

@@ -6,7 +6,61 @@ import StatisticsCard from '../StatisticsCard';
 export default function CrmDashboard() {
     const monthlyData = {
         labels: ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'],
-        data: [2000, 1500, 1600, 1800, 1600, 1800, 2500, 2300, 2500, 3500, 3000, 3300]
+        sales: [2000, 1500, 1600, 1800, 1600, 1800, 2500, 2300, 2500, 3500, 3000, 3300],
+        orders: [150, 120, 140, 160, 130, 150, 200, 180, 190, 250, 220, 240]
+    };
+
+    const [activeDataset, setActiveDataset] = React.useState('all');
+    const [hoveredButton, setHoveredButton] = React.useState<string | null>(null);
+
+    const getButtonStyle = (type: string) => {
+        const isActive = activeDataset === type;
+        
+        return {
+            borderRadius: '16px',
+            transition: 'all 0.2s ease',
+            border: 'none',
+            boxShadow: isActive ? '0 2px 4px rgba(0,0,0,0.1)' : 'none',
+            backgroundColor: isActive ? 'var(--bs-primary)' : '#fff',
+            cursor: 'pointer',
+            padding: '4px 12px',
+            fontSize: '0.875rem'
+        };
+    };
+
+    const getChartData = () => {
+        const datasets = [];
+
+        if (activeDataset === 'all' || activeDataset === 'sales') {
+            datasets.push({
+                label: 'Satışlar',
+                data: monthlyData.sales,
+                borderColor: 'rgb(66, 139, 255)',
+                backgroundColor: 'rgba(66, 139, 255, 0.1)'
+            });
+        }
+
+        if (activeDataset === 'all' || activeDataset === 'orders') {
+            datasets.push({
+                label: 'Siparişler',
+                data: monthlyData.orders,
+                borderColor: 'rgb(255, 99, 132)',
+                backgroundColor: 'rgba(255, 99, 132, 0.1)'
+            });
+        }
+
+        return datasets;
+    };
+
+    const getOptionColor = (value: string) => {
+        switch (value) {
+            case 'sales':
+                return 'rgb(66, 139, 255)';
+            case 'orders':
+                return 'rgb(255, 99, 132)';
+            default:
+                return 'linear-gradient(to right, rgb(66, 139, 255) 0%, rgb(66, 139, 255) 50%, rgb(255, 99, 132) 50%, rgb(255, 99, 132) 100%)';
+        }
     };
 
     const statisticsData = [
@@ -62,24 +116,76 @@ export default function CrmDashboard() {
             <div className="row g-3">
                 <div className="col-12  ">
                     <div className="card flex-fill w-100">
-                        <div className="card-header">
-                            <div className="float-end">
-                                <form className="row g-2">
-                                    <div className="col-auto">
-                                        <select className="form-select form-select-sm bg-light border-0">
-                                            <option value="0">Tümü</option>
-                                            <option value="1">Satışlar</option>
-                                            <option value="2">Siparişler</option>
-                                        </select>
-                                    </div>
-                                </form>
+                        <div className="card-header d-flex justify-content-between align-items-center">
+                            <div className="d-flex align-items-center">
+                                <h5 className="card-title mb-0">Aylık Satış ve Sipariş</h5>
+
                             </div>
-                            <h5 className="card-title mb-0">Aylık Sipariş</h5>
+                            <div className="d-flex gap-2">
+                                <button 
+                                    onClick={() => setActiveDataset('all')}
+                                    className={`btn d-flex align-items-center ${activeDataset === 'all' ? 'btn-primary' : 'btn-light'}`}
+                                    style={getButtonStyle('all')}
+                                >
+                                    <div style={{
+                                        width: '6px',
+                                        height: '6px',
+                                        borderRadius: '50%',
+                                        backgroundColor: 'rgb(66, 139, 255)',
+                                        marginRight: '4px',
+                                        transition: 'all 0.2s ease',
+                                        transform: activeDataset === 'all' ? 'scale(1.2)' : 'scale(1)'
+                                    }}></div>
+                                    <div style={{
+                                        width: '6px',
+                                        height: '6px',
+                                        borderRadius: '50%',
+                                        backgroundColor: 'rgb(255, 99, 132)',
+                                        marginRight: '6px',
+                                        transition: 'all 0.2s ease',
+                                        transform: activeDataset === 'all' ? 'scale(1.2)' : 'scale(1)'
+                                    }}></div>
+                                    <span className={activeDataset === 'all' ? 'text-white' : 'text-muted'}>Tümü</span>
+                                </button>
+                                <button 
+                                    onClick={() => setActiveDataset('sales')}
+                                    className={`btn d-flex align-items-center ${activeDataset === 'sales' ? 'btn-primary' : 'btn-light'}`}
+                                    style={getButtonStyle('sales')}
+                                >
+                                    <div style={{
+                                        width: '6px',
+                                        height: '6px',
+                                        borderRadius: '50%',
+                                        backgroundColor: 'rgb(66, 139, 255)',
+                                        marginRight: '6px',
+                                        transition: 'all 0.2s ease',
+                                        transform: activeDataset === 'sales' ? 'scale(1.2)' : 'scale(1)'
+                                    }}></div>
+                                    <span className={activeDataset === 'sales' ? 'text-white' : 'text-muted'}>Satışlar</span>
+                                </button>
+                                <button 
+                                    onClick={() => setActiveDataset('orders')}
+                                    className={`btn d-flex align-items-center ${activeDataset === 'orders' ? 'btn-primary' : 'btn-light'}`}
+                                    style={getButtonStyle('orders')}
+                                >
+                                    <div style={{
+                                        width: '6px',
+                                        height: '6px',
+                                        borderRadius: '50%',
+                                        backgroundColor: 'rgb(255, 99, 132)',
+                                        marginRight: '6px',
+                                        transition: 'all 0.2s ease',
+                                        transform: activeDataset === 'orders' ? 'scale(1.2)' : 'scale(1)'
+                                    }}></div>
+                                    <span className={activeDataset === 'orders' ? 'text-white' : 'text-muted'}>Siparişler</span>
+                                </button>
+                            </div>
                         </div>
                         <div className="card-body pt-2 pb-3">
                             <div className="chart chart-md">
-                                <LineChart data={monthlyData.data} labels={monthlyData.labels} label="" borderColor="rgb(66, 139, 255)" backgroundColor="rgba(66, 139, 255, 0.1)" height={300} />
+                                <LineChart data={getChartData()} labels={monthlyData.labels} height={300} />
                             </div>
+
                         </div>
                     </div>
                 </div>
