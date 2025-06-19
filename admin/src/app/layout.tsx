@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import 'flatpickr/dist/flatpickr.min.css'
+import 'bootstrap-icons/font/bootstrap-icons.css';
 import "./globals.css";
+
 import { SidebarProvider } from "@/context/SidebarContext";
 import Script from "next/script";
 const geistSans = Geist({
