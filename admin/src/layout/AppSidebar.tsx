@@ -71,6 +71,14 @@ export default function AppSidebar() {
                     label: 'Mesajlar',
                     icon: 'message-square',
                     path: '/crm/messages'
+                },
+                {
+                    label: 'Form Editor',
+                    icon: 'message-square',
+                    setupSubMenu: [
+                        { label: 'Form Editor', path: '/crm/form-editor' },
+                        { label: 'Müşteri Raporları', path: '/crm/form/customers' }
+                    ]
                 }
             ]
         }
