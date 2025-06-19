@@ -1,5 +1,7 @@
 'use client'
 import React, { useState } from "react";
+import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, DragEndEvent, useDraggable, useDroppable, } from '@dnd-kit/core';
+
 
 interface FormComponent {
     type: string;
@@ -55,18 +57,9 @@ function ComponentPalette({ onDragStart, }: { onDragStart: (e: React.DragEvent<H
     );
 }
 
-interface FormCanvasProps {
-    formItems: FormComponent[];
-    onDrop: (e: React.DragEvent<HTMLDivElement>) => void;
-    onSelect: (id: number) => void;
-    selectedId: number | null;
-}
-
 
 
 export default function Page() {
-    const [formItems, setFormItems] = useState<FormComponent[]>([]);
-    const [selectedId, setSelectedId] = useState<number | null>(null);
 
     const handleDragStart = (e: React.DragEvent<HTMLDivElement>, comp: FormComponent) => {
         e.dataTransfer.setData("component", JSON.stringify(comp));
