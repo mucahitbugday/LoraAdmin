@@ -40,8 +40,8 @@ export default function CustomersPage() {
     return (
 
         <>
-            <PageListTable pathname={'/admin/users'} pageTitle='Müşteri Listesi' />
-            {/* 
+            {/* <PageListTable pathname={'/admin/users'} pageTitle='Müşteri Listesi' /> */}
+
 
             <div className="card flex-fill w-100 mt-2">
                 <div className="card-header py-2">
@@ -111,8 +111,8 @@ export default function CustomersPage() {
                             </button>
                         </div>
                     </div>
-        </div >
-                </div> */}
+                </div >
+            </div>
         </>
 
     )
