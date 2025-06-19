@@ -5,6 +5,8 @@ export const customers: Customer[] = [
         id: 1,
         name: 'John',
         surname:'Deep',
+        fullName:'John Deep',
+        customerType:'Bireysel',
         image: 'https://demo.adminkit.io/img/avatars/avatar.jpg',
         email: 'john.doe@example.com',
         phone: '1234567890',
@@ -16,10 +18,12 @@ export const customers: Customer[] = [
         memberId: 'ID001',
         birthDate: '1980-01-15',
         gender: 'male',
-        store: '1',
+        store: 'Piazza AVM',
         representative: '1',
         status: 'true',
         category: '1',
+        source:'e-ticaret',
+        registerDate:'05.05.2025 15:22',
         identityInfo: {
             nationalId: '12345678901',
             serialNumber: 'A12345678',
@@ -80,74 +84,6 @@ export const customers: Customer[] = [
                 amount: 2500
             }
         ]
-    },
-    {
-        id: 2,
-        name: 'Jane Smith',
-        surname: 'Smith',
-        image: 'https://demo.adminkit.io/img/avatars/avatar-2.jpg',
-        email: 'jane.smith@example.com',
-        phone: '0987654321',
-        address: '456 Oak St, Somewhere, USA',
-        city: 'Somewhere',
-        state: 'NY',
-        zip: '54321',
-        memberCode: 'M002',
-        memberId: 'ID002',
-        birthDate: '1985-05-20',
-        gender: 'female',
-        store: '2',
-        representative: '2',
-        status: 'true',
-        category: '2',
-        identityInfo: {
-            nationalId: '98765432109',
-            serialNumber: 'B98765432',
-            placeOfBirth: 'Ankara',
-            bloodType: 'B+',
-            driverLicenseNumber: 'E987654',
-            insuranceInstitution: 'SGK',
-            insuranceNumber: 'S987654',
-            maritalStatus: 'Single',
-            marriageDate: '',
-            fatherName: 'Robert Smith',
-            motherName: 'Sarah Smith',
-            occupation: 'Doctor',
-            monthlyIncome: 25000,
-            creditDiscount: 10,
-            cashDiscount: 15,
-            gender: '',
-            birthDate: '1985-05-20'
-        },
-        addressInfo: {
-            officialTitle: 'Jane Smith Medical Center',
-            country: 'Turkey',
-            city: 'Ankara',
-            district: 'Çankaya',
-            postalCode: '06680',
-            address: 'Atatürk Bulvarı No:456 D:7',
-            taxOffice: 'Çankaya',
-            taxNumber: '9876543210',
-            phone1: '0312 456 78 90',
-            phone2: '0312 456 78 91',
-            mobilePhone: '0533 456 78 90',
-            email: 'info@janesmith.com',
-            website: 'https://janesmith.com'
-        },
-        crmCards: [
-            {
-                id: 3,
-                date: '2024-01-05',
-                cardId: 1,
-                description: 'Became VIP member'
-            }
-        ],
-        purchases: [
-            {
-                id: 3,
-                date: '2024-01-05',
-                amount: 5000
-            }
-        ]
     }
+  
 ]

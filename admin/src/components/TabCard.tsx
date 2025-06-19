@@ -14,38 +14,47 @@ interface TabCardProps {
 
 const TabCard: React.FC<TabCardProps> = ({ type, variant = 'horizontal', tabs }) => {
     const getTabClass = () => {
-        let className = 'tab';
-        if (type === 'primary') className += ' tab-primary';
-        if (variant === 'vertical') className += ' tab-vertical';
-        if (type === 'colored-icon' && variant === 'vertical') className += ' tab-danger';
+        let className = 'card';
+        if (variant === 'vertical') {
+            className += ' d-flex flex-row';
+        }
+        return className;
+    };
+
+    const getNavClass = () => {
+        let className = 'nav nav-tabs';
+        if (variant === 'vertical') {
+            className += ' flex-column nav-pills me-3';
+        }
+        if (type === 'primary') {
+            className += ' nav-fill';
+        }
         return className;
     };
 
     const renderTabHeader = (tab: Tab, index: number) => {
         const isIcon = type === 'icon' || type === 'colored-icon';
+        const iconColor = type === 'colored-icon' ? 'text-danger' : '';
 
-        if (isIcon) {
-            return (
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-home align-middle">
-                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
-                </svg>
-            );
-        }
-
-        return tab.title;
+        return isIcon ? (
+            <i className={`feather icon-home ${iconColor}`}></i>
+        ) : (
+            tab.title
+        );
     };
 
     return (
         <div className={getTabClass()}>
-            <ul className="nav nav-tabs" role="tablist">
+            <ul className={getNavClass()} role="tablist">
                 {tabs.map((tab, index) => (
                     <li key={tab.id} className="nav-item" role="presentation">
                         <a
-                            className={`nav-link  ${index === 0 ? 'active border border-bottom-0' : ''}`}
-                            href={`#${tab.id}`}
+                            className={`nav-link ${index === 0 ? 'active' : ''}`}
+                            id={`tab-${tab.id}`}
                             data-bs-toggle="tab"
+                            href={`#${tab.id}`}
                             role="tab"
+                            aria-controls={tab.id}
                             aria-selected={index === 0}
                         >
                             {renderTabHeader(tab, index)}
@@ -53,13 +62,15 @@ const TabCard: React.FC<TabCardProps> = ({ type, variant = 'horizontal', tabs })
                     </li>
                 ))}
             </ul>
-            <div className="tab-content border">
+
+            <div className="tab-content flex-fill p-3 border-top border-start border-end">
                 {tabs.map((tab, index) => (
                     <div
                         key={tab.id}
-                        className={`tab-pane ${index === 0 ? 'active' : ''}`}
+                        className={`tab-pane fade ${index === 0 ? 'show active' : ''}`}
                         id={tab.id}
                         role="tabpanel"
+                        aria-labelledby={`tab-${tab.id}`}
                     >
                         {tab.content}
                     </div>
@@ -69,4 +80,4 @@ const TabCard: React.FC<TabCardProps> = ({ type, variant = 'horizontal', tabs })
     );
 };
 
-export default TabCard; 
+export default TabCard;

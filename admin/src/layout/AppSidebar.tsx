@@ -159,7 +159,7 @@ export default function AppSidebar() {
         <nav id="sidebar" className={`sidebar js-sidebar ${isExpanded ? '' : 'collapsed'}`}>
             <div className="sidebar-content js-simplebar">
                 <a className="sidebar-brand" href="/">
-                    <span className="align-middle">AdminKit</span>
+                    <span className="align-middle">Lora CRM</span>
                 </a>
 
                 <ul className="sidebar-nav">

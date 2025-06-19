@@ -1,5 +1,4 @@
-import TableCard from '@/components/TableCard';
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import type { CrmCard } from '@/models/Customer';
 
 interface CrmCardsProps {
@@ -11,33 +10,33 @@ export default function CrmCards({ data, onChange }: CrmCardsProps) {
     const [crmKartlari, setCrmKartlari] = useState<CrmCard[]>(data);
 
     const handleDelete = (id: number) => {
-        const updated = crmKartlari.filter((item: CrmCard) => item.id !== id);
+        const updated = crmKartlari.filter(item => item.id !== id);
         setCrmKartlari(updated);
         onChange(updated);
-    }
+    };
 
     const handleChange = (id: number, field: string, value: string) => {
-        const updated = crmKartlari.map((item: CrmCard) =>
+        const updated = crmKartlari.map(item =>
             item.id === id ? { ...item, [field]: value } : item
         );
         setCrmKartlari(updated);
         onChange(updated);
-    }
+    };
 
     return (
-        <div>
-            <table className="table">
-                <thead>
+        <div className="table-responsive">
+            <table className="table table-bordered table-striped align-middle">
+                <thead className="table-light">
                     <tr>
-                        <th style={{ width: '15%' }}>Date</th>
-                        <th style={{ width: '15%' }}>Card</th>
-                        <th style={{ width: '65%' }}>Description</th>
-                        <th style={{ width: '5%' }}>Action</th>
+                        <th style={{ width: '15%' }}>Tarih</th>
+                        <th style={{ width: '20%' }}>Kart</th>
+                        <th style={{ width: '60%' }}>Açıklama</th>
+                        <th style={{ width: '5%' }}>Sil</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {crmKartlari.map((item: CrmCard, index: number) => (
-                        <tr key={index} className="align-middle">
+                    {crmKartlari.map((item, index) => (
+                        <tr key={index}>
                             <td>
                                 <input
                                     type="date"
@@ -52,22 +51,23 @@ export default function CrmCards({ data, onChange }: CrmCardsProps) {
                                     value={item.cardId}
                                     onChange={(e) => handleChange(item.id, 'cardId', e.target.value)}
                                 >
-                                    <option value="">--Select--</option>
-                                    <option value="1">CRM Card 1</option>
-                                    <option value="2">CRM Card 2</option>
+                                    <option value="">--Kart Seçin--</option>
+                                    <option value="1">CRM Kartı 1</option>
+                                    <option value="2">CRM Kartı 2</option>
                                 </select>
                             </td>
                             <td>
                                 <textarea
                                     className="form-control"
                                     rows={1}
+                                    placeholder="Açıklama girin..."
                                     value={item.description}
                                     onChange={(e) => handleChange(item.id, 'description', e.target.value)}
                                 ></textarea>
                             </td>
-                            <td className="table-action">
+                            <td className="text-center">
                                 <button
-                                    className="btn btn-danger w-100"
+                                    className="btn btn-sm btn-danger"
                                     onClick={() => handleDelete(item.id)}
                                 >
                                     <i className="fa fa-trash"></i>

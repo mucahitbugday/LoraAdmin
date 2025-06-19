@@ -21,62 +21,7 @@ export default function CustomerDetailPage({ params }: { params: Promise<{ id: s
 
     useEffect(() => {
         if (id == 'new') {
-            setCustomerData({
-                id: 0,
-                name: '',
-                surname: '',
-                image: '',
-                email: '',
-                phone: '',
-                address: '',
-                city: '',
-                state: '',
-                zip: '',
-                memberCode: '',
-                memberId: '',
-                birthDate: '',
-                gender: '',
-                store: '',
-                representative: '',
-                status: '',
-                category: '',
-                identityInfo: {
-                    nationalId: '',
-                    serialNumber: '',
-                    placeOfBirth: '',
-                    bloodType: '',
-                    driverLicenseNumber: '',
-                    insuranceInstitution: '',
-                    insuranceNumber: '',
-                    maritalStatus: '',
-                    marriageDate: '',
-                    fatherName: '',
-                    motherName: '',
-                    occupation: '',
-                    monthlyIncome: 0,
-                    creditDiscount: 0,
-                    cashDiscount: 0,
-                    gender: '',
-                    birthDate: ''
-                },
-                addressInfo: {
-                    officialTitle: '',
-                    country: '',
-                    city: '',
-                    district: '',
-                    postalCode: '',
-                    address: '',
-                    taxOffice: '',
-                    taxNumber: '',
-                    phone1: '',
-                    phone2: '',
-                    mobilePhone: '',
-                    email: '',
-                    website: ''
-                },
-                crmCards: [],
-                purchases: []
-            })
+            setCustomerData(null)
             return
         }
 

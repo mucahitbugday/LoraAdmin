@@ -14,8 +14,8 @@ export interface IdentityInfo {
   monthlyIncome: number;
   creditDiscount: number;
   cashDiscount: number;
-  gender:string
-  birthDate:string
+  gender: string
+  birthDate: string
 }
 
 export interface AddressInfo {
@@ -51,6 +51,8 @@ export interface Customer {
   id: number;
   name: string;
   surname: string;
+  fullName: string,
+  customerType:string,
   image: string;
   email: string;
   phone: string;
@@ -66,6 +68,8 @@ export interface Customer {
   representative: string;
   status: string;
   category: string;
+  source: string
+  registerDate: string
   identityInfo: IdentityInfo;
   addressInfo: AddressInfo;
   crmCards: CrmCard[];
