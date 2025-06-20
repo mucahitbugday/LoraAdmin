@@ -211,7 +211,7 @@ export default function GlobalPageList({ pathname }: { pathname: string }) {
                         </thead>
                         <tbody>
                             {pageData?.data.map((item, index) => (
-                                <tr style={{ cursor: 'pointer' }} key={index} onDoubleClick={() => router.push(`/crm/customers/${item.id}`)}>
+                                <tr style={{ cursor: 'pointer' }} key={index} onDoubleClick={() => router.push(`${pathname}/${item._id}`)}>
                                     <td style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                                         {item.id ?? index + 1}
                                     </td>

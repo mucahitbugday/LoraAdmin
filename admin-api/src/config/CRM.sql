@@ -33,16 +33,18 @@ CREATE PROCEDURE SP_Select_CustomerList
 AS
 BEGIN
 
-      SELECT 
-	  c.NameSurname AS fullName,
-	  'Bireysel Müşteri' AS customerType,
-	  c.Email AS email,
-	  '05455518591' AS phone,
-	  c.Statu AS statu,
-	  '-' AS source,
-	  '-' AS store,
-	  FORMAT(c.CreateDate, 'dd.MM.yyyy') AS registerDate
-	  INTO #tmp FROM crmdemo.dbo.Users c
+      SELECT
+            c.UserID                           AS '_id'
+           ,c.NameSurname                      AS fullName
+           ,'Bireysel Müşteri'                 AS customerType
+           ,c.Email                            AS email
+           ,'05455518591'                      AS phone
+           ,c.Statu                            AS statu
+           ,'-'                                AS source
+           ,'-'                                AS store
+           ,FORMAT(c.CreateDate, 'dd.MM.yyyy') AS registerDate
+       INTO #tmp
+       FROM crmdemo.dbo.Users c;
 
 
       DECLARE @SatirAtla INT = (@pageNumber * @pageLimit) - @pageLimit;
@@ -73,3 +75,4 @@ BEGIN
 
       DROP TABLE #tmp;
 END;
+GO
