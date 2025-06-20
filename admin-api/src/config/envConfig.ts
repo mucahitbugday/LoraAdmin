@@ -47,7 +47,7 @@ const defaultConfig: Config = {
     HOST: '100.68.72.10',
     USER: 'sa',
     PASSWORD: '2012696@MCbd',
-    NAME: 'crmdemo',
+    NAME: 'LoraCrm',
     PORT: 1433,
   },
   REDIS: {

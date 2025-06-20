@@ -3,104 +3,54 @@
 import React, { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import feather from 'feather-icons';
+import { menuService } from '@/services/helperService';
+import { PageDataRequest, PageDataResponse } from '@/services/models/helperModel';
 
-interface FilterField {
-    name: string;
-    label: string;
-}
-
-interface PageData<T = any> {
-    page: number;
-    pageTodalCount: number;
-    pageTitle: string;
-    orderBy?: string;
-    butons?: { label: string; icon: string; action: string }[];
-    data: T[];
-    filterFields: FilterField[];
-}
-
-function generateSampleData() {
-    const names = ['John Deep', 'Alice Stone', 'Michael Ray', 'Sara Connor', 'Tom Hardy'];
-    const emails = ['john.doe@example.com', 'alice@example.com', 'mike@example.com', 'sara@example.com', 'tom@example.com'];
-    const stores = ['Piazza AVM', 'Forum İstanbul', 'Cevahir', 'Optimum', 'Kanyon'];
-    const sources = ['e-ticaret', 'mağaza', 'mobil', 'call center'];
-    const statuses = ['true', 'false'];
-
-    const result = [];
-
-    for (let i = 1; i <= 5; i++) {
-        const nameIndex = Math.floor(Math.random() * names.length);
-        const emailIndex = Math.floor(Math.random() * emails.length);
-        const storeIndex = Math.floor(Math.random() * stores.length);
-        const sourceIndex = Math.floor(Math.random() * sources.length);
-        const statusIndex = Math.floor(Math.random() * statuses.length);
-
-        result.push({
-            id: i,
-            fullName: names[nameIndex],
-            customerType: Math.random() > 0.5 ? 'Bireysel' : 'Kurumsal',
-            email: emails[emailIndex],
-            phone: `5${Math.floor(100000000 + Math.random() * 900000000)}`,
-            status: statuses[statusIndex],
-            source: sources[sourceIndex],
-            store: stores[storeIndex],
-            registerDate:
-                new Date(2025, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1)
-                    .toLocaleDateString('tr-TR') +
-                ' ' +
-                new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })
-        });
-    }
-
-    return result;
-}
-
-const sampleData: PageData = {
-    pageTitle: 'Müşteri Listesi',
-    page: 1,
-    orderBy: '',
-    pageTodalCount: 1,
-    data: generateSampleData(),
-    butons: [
-        { label: 'Yeni Kayıt', icon: 'bi-plus', action: 'new' },
-        { label: 'Dışa Aktar', icon: 'bi-box-arrow-up-right', action: 'export' },
-        { label: 'Yazdır', icon: 'bi-printer', action: 'print' }
-    ],
-    filterFields: [
-        { name: 'fullName', label: 'Ad Soyad' },
-        { name: 'customerType', label: 'Müşteri Tipi' },
-        { name: 'email', label: 'Email' },
-        { name: 'phone', label: 'Telefon' },
-        { name: 'status', label: 'Durum' },
-        { name: 'source', label: 'Kaynak' },
-        { name: 'store', label: 'Mağaza' },
-        { name: 'registerDate', label: 'Kayıt Tarihi' }
-    ]
-};
-
-
-
-export default function GenericTablePage() {
-    const pathname = usePathname();
+export default function GlobalPageList({ pathname }: { pathname: string }) {
     const router = useRouter();
-    const [pageData, setPageData] = useState<PageData | null>(null);
+    const [pageData, setPageData] = useState<PageDataResponse | null>(null);
     const [search, setSearch] = useState('');
     const [filterData, setFilterData] = useState<Record<string, string>>({});
     const [currentPage, setCurrentPage] = useState(1);
+    const [pageLimit, setPageLimit] = useState(12);
+
+
     const [orderBy, setOrderBy] = useState<string>('');
     const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
 
+
+    const dataload = async () => {
+        const req = {
+            page: currentPage,
+            pathname: pathname,
+            orderBy: orderBy,
+            pageLimit: pageLimit,
+            filterFields: Object.entries(filterData).map(([name, value]) => ({ name, label: name, value }))
+        } as PageDataRequest;
+
+        try {
+            const data = await menuService.getPageList(req);
+            setPageData(data);
+            setFilterData(Object.fromEntries(data.filterFields.map(f => [f.name, ''])));
+        } catch (error) {
+            console.error('Error fetching page data:', error);
+        }
+    }
+
     useEffect(() => {
-        setPageData(sampleData);
-        setCurrentPage(sampleData.page);
-        setFilterData(Object.fromEntries(sampleData.filterFields.map(f => [f.name, ''])));
+
+        dataload()
+
+        // setPageData(sampleData);
+        // setCurrentPage(sampleData.page);
+        // setFilterData(Object.fromEntries(sampleData.filterFields.map(f => [f.name, ''])));
         feather.replace();
 
-        
 
 
 
-    }, []);
+
+    }, [currentPage]);
 
 
 
@@ -111,6 +61,7 @@ export default function GenericTablePage() {
     };
     const handlePageChange = (page: number) => {
         const total = pageData?.pageTodalCount ?? 1;
+
         if (page >= 1 && page <= total) {
             setCurrentPage(page);
         }
@@ -118,7 +69,8 @@ export default function GenericTablePage() {
     const renderPagination = () => {
         if (!pageData) return null;
 
-        const total = pageData.pageTodalCount;
+        const total = pageData.pageTodalCount ; 
+        console.log('Total pages:', total);
         const maxButtons = 5;
         const pages: (number | string)[] = [];
 
@@ -197,7 +149,7 @@ export default function GenericTablePage() {
             case 'export':
                 alert('Dışa aktarma işlemi henüz uygulanmadı.');
                 break;
-            
+
             case 'print':
                 alert('Yazdırma işlemi henüz uygulanmadı.');
                 break;
@@ -214,6 +166,12 @@ export default function GenericTablePage() {
                         <h5 className="card-title mb-0">{pageData?.pageTitle}</h5>
                         <form className="row g-2">
                             <div className="col-auto">
+                                <button className="btn btn-primary btn-sm" type="button" onClick={() => dataload()}>
+                                    <i className="bi bi-refresh me-1"></i> Yemile
+                                </button>
+                            </div>
+
+                            <div className="col-auto">
                                 <input type="text" className="form-control form-control-sm bg-light border-0 rounded-2" placeholder="Ara..." style={{ width: 200 }} value={search} onChange={(e) => setSearch(e.target.value)} />
                             </div>
                             {pageData?.filterFields && pageData?.filterFields?.length > 0 && (
@@ -223,9 +181,9 @@ export default function GenericTablePage() {
                                     </button>
                                 </div>
                             )}
-                            {pageData?.butons?.map((btn, i) => (
-                                <div className="col-auto">
-                                    <button key={i} className="btn btn-sm btn-primary" onClick={() => { handlePageAction(btn.action) }} type="button">
+                            {pageData?.butons?.map((btn, index) => (
+                                <div key={index} className="col-auto">
+                                    <button className="btn btn-sm btn-primary" onClick={() => { handlePageAction(btn.action) }} type="button">
                                         <i className={`bi ${btn.icon} me-1`}></i> {btn.label}
                                     </button>
                                 </div>

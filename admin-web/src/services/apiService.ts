@@ -2,7 +2,7 @@ import axios from 'axios';
 import { cookieService } from './helperService';
 import { authService } from './authService';
 
-const API_URL = 'https://adminapi.ogrencim.info/api';
+const API_URL = 'http://localhost:2140/api';
 
 
 const api = axios.create({

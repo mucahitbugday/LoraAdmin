@@ -7,11 +7,11 @@ import rateLimit from 'express-rate-limit';
 import compression from 'compression';
 import routes from './src/routes'
 import dotenv from 'dotenv';
-import envConfig from './src/config/envConfig';
 import { ConnectionPool } from 'mssql';
 import dbConfig from './src/config/mssql';
 import Redis from 'ioredis';
 import rabbitmqService from './src/services/rabbitmqService';
+import envConfig from './src/config/envConfig';
 
 dotenv.config();
 
@@ -26,11 +26,8 @@ app.use(morgan('dev'));
 app.options('*', cors());
 app.use(cors({
     origin: [
-        'http://localhost:5001',
-        'http://100.68.72.10:5001',
-        'https://admin.ogrencim.info',
-        'https://admin.ogrencim.info',
-        'https://admin.ogrencim.info/api',
+        'http://localhost:3000',
+        'http://100.121.216.30:3000'
     ],
     credentials: true
 }));
