@@ -84,12 +84,12 @@ export default function GenericTablePage() {
     const [search, setSearch] = useState('');
     const [filterData, setFilterData] = useState<Record<string, string>>({});
     const [currentPage, setCurrentPage] = useState(1);
+    const [orderBy, setOrderBy] = useState<string>('');
+    const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
 
-    // Feather ve veri yükleme
     useEffect(() => {
         feather.replace();
         setTimeout(() => {
-
             setPageData(sampleData);
             setFilterData(Object.fromEntries(sampleData.filterFields.map(f => [f.name, ''])));
         }, 500);
@@ -163,7 +163,6 @@ export default function GenericTablePage() {
                     </li>
                 ))}
 
-                {/* Sağa git */}
                 <li className={`page-item ${!showRight ? 'disabled' : ''}`}>
                     <button className="page-link" onClick={() => handlePageChange(currentPage + 1)}>&raquo;</button>
                 </li>
@@ -171,11 +170,37 @@ export default function GenericTablePage() {
         );
     };
 
+
     const getStatusBadgeClass = (status: string) => {
         switch (status) {
             case 'true': return 'bg-success';
             case 'false': return 'bg-warning';
             default: return 'bg-secondary';
+        }
+    };
+
+    const getSortIcon = (field: string) => {
+        if (orderBy === field) {
+            return sortDirection === 'asc' ? (
+                <i className="bi bi-sort-up ms-1 text-dark"></i>
+            ) : (
+                <i className="bi bi-sort-down ms-1 text-dark"></i>
+            );
+        } else {
+            return (
+                <i className="bi bi-sort ms-1 text-secondary"></i>
+            );
+        }
+    };
+
+
+
+    const handleSort = (field: string) => {
+        if (orderBy === field) {
+            setSortDirection(prev => (prev === 'asc' ? 'desc' : 'asc'));
+        } else {
+            setOrderBy(field);
+            setSortDirection('asc');
         }
     };
 
@@ -221,7 +246,9 @@ export default function GenericTablePage() {
                             <tr>
                                 <th style={{ width: '5%' }}>#</th>
                                 {pageData?.filterFields.map((f) => (
-                                    <th key={f.name}>{f.label}</th>
+                                    <th key={f.name} style={{ cursor: 'pointer', userSelect: 'none' }} onClick={() => handleSort(f.name)} >
+                                        {f.label}{getSortIcon(f.name)}
+                                    </th>
                                 ))}
                             </tr>
                         </thead>
@@ -262,29 +289,18 @@ export default function GenericTablePage() {
                 </div>
             </div>
 
-            {/* Offcanvas Filter */}
             <div className="offcanvas offcanvas-end" tabIndex={-1} id="offcanvasRight">
                 <div className="offcanvas-header border-bottom">
-                    <h5 className="offcanvas-title">Filtreleme</h5>
+                    <h5 className="offcanvas-title">{pageData?.pageTitle} Filtre </h5>
                     <button className="btn-close" data-bs-dismiss="offcanvas" aria-label="Close" />
                 </div>
                 <div className="offcanvas-body">
                     {pageData?.filterFields.map(({ name, label }) => (
                         <div key={name} className="input-group mb-2">
                             <span className="input-group-text" style={{ width: 120 }}>{label}</span>
-                            <input
-                                name={name}
-                                type="text"
-                                className="form-control"
-                                value={filterData?.[name] || ''}
-                                onChange={handleFilterChange}
-                            />
-                            <button
-                                type="button"
-                                className="input-group-text"
-                                onClick={() => setFilterData((prev) => ({ ...prev, [name]: '' }))}
-                            >
-                                <i data-feather="x"></i>
+                            <input name={name} type="text" className="form-control" value={filterData?.[name] || ''} onChange={handleFilterChange} />
+                            <button type="button" className="input-group-text" onClick={() => setFilterData((prev) => ({ ...prev, [name]: '' }))}>
+                                <i className="bi bi-x me-1"></i>
                             </button>
                         </div>
                     ))}
@@ -293,12 +309,7 @@ export default function GenericTablePage() {
                         <button className="btn btn-secondary w-100">
                             <i data-feather="check" className="me-1" /> Uygula
                         </button>
-                        <button
-                            className="btn btn-danger w-100"
-                            onClick={() =>
-                                setFilterData(Object.fromEntries((pageData?.filterFields ?? []).map(f => [f.name, ''])))
-                            }
-                        >
+                        <button className="btn btn-danger w-100" onClick={() => setFilterData(Object.fromEntries((pageData?.filterFields ?? []).map(f => [f.name, ''])))} >
                             <i data-feather="x" className="me-1" /> Temizle
                         </button>
                     </div>
