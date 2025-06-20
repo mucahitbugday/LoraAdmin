@@ -95,21 +95,26 @@ export default function GenericTablePage() {
         setCurrentPage(sampleData.page);
         setFilterData(Object.fromEntries(sampleData.filterFields.map(f => [f.name, ''])));
         feather.replace();
+
+        
+
+
+
     }, []);
+
+
 
     const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setFilterData(prev => ({ ...prev, [name]: value }));
         setCurrentPage(1);
     };
-
     const handlePageChange = (page: number) => {
         const total = pageData?.pageTodalCount ?? 1;
         if (page >= 1 && page <= total) {
             setCurrentPage(page);
         }
     };
-
     const renderPagination = () => {
         if (!pageData) return null;
 
@@ -156,7 +161,6 @@ export default function GenericTablePage() {
             </ul>
         );
     };
-
     const getStatusBadgeClass = (status: string) => {
         switch (status) {
             case 'true': return 'bg-success';
@@ -164,7 +168,6 @@ export default function GenericTablePage() {
             default: return 'bg-secondary';
         }
     };
-
     const getSortIcon = (field: string) => {
         if (orderBy === field) {
             return sortDirection === 'asc' ? (
@@ -178,7 +181,6 @@ export default function GenericTablePage() {
             );
         }
     };
-
     const handleSort = (field: string) => {
         if (orderBy === field) {
             setSortDirection(prev => (prev === 'asc' ? 'desc' : 'asc'));
@@ -187,7 +189,6 @@ export default function GenericTablePage() {
             setSortDirection('asc');
         }
     };
-
     const handlePageAction = (action: string) => {
         switch (action) {
             case 'new':
