@@ -20,65 +20,69 @@ export default function GlobalPageList({ pathname }: { pathname: string }) {
 
 
     const dataload = async () => {
-        const req = {
+        const req: PageDataRequest = {
             page: currentPage,
             pathname: pathname,
             orderBy: orderBy,
+            sortDirection: sortDirection,
             pageLimit: pageLimit,
-            filterFields: Object.entries(filterData).map(([name, value]) => ({ name, label: name, value }))
-        } as PageDataRequest;
+            search: search,
+            filterFields: Object.entries(filterData)
+                .map(([name, value]) => ({ name, value }))
+                .filter(f => f.value),
+        };
 
         try {
             const data = await menuService.getPageList(req);
             setPageData(data);
-            setFilterData(Object.fromEntries(data.filterFields.map(f => [f.name, ''])));
+            if (!Object.keys(filterData).length) {
+                setFilterData(Object.fromEntries(data.filterFields.map(f => [f.name, ''])));
+            }
         } catch (error) {
             console.error('Error fetching page data:', error);
         }
     }
 
     useEffect(() => {
-
         dataload()
-
-        // setPageData(sampleData);
-        // setCurrentPage(sampleData.page);
-        // setFilterData(Object.fromEntries(sampleData.filterFields.map(f => [f.name, ''])));
         feather.replace();
-
-
-
-
-
-    }, [currentPage]);
+    }, [currentPage, orderBy, sortDirection]);
 
 
 
     const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setFilterData(prev => ({ ...prev, [name]: value }));
-        setCurrentPage(1);
     };
+    const handleApplyFilters = () => {
+        setCurrentPage(1);
+        dataload();
+    }
+    const handleClearFilters = () => {
+        setFilterData(Object.fromEntries((pageData?.filterFields ?? []).map(f => [f.name, ''])));
+        setCurrentPage(1);
+        dataload();
+    }
     const handlePageChange = (page: number) => {
-        const total = pageData?.pageTodalCount ?? 1;
+        const totalPages = pageData ? Math.ceil(pageData.pageTodalCount / pageLimit) : 1;
 
-        if (page >= 1 && page <= total) {
+        if (page >= 1 && page <= totalPages) {
             setCurrentPage(page);
         }
     };
     const renderPagination = () => {
         if (!pageData) return null;
 
-        const total = pageData.pageTodalCount ; 
-        console.log('Total pages:', total);
+        const totalPages = Math.ceil(pageData.pageTodalCount / pageLimit);
+        console.log('Total records:', pageData.pageTodalCount, 'Page limit:', pageLimit, 'Total pages:', totalPages);
         const maxButtons = 5;
         const pages: (number | string)[] = [];
 
         const showLeft = currentPage > 1;
-        const showRight = currentPage < total;
+        const showRight = currentPage < totalPages;
 
         let start = Math.max(1, currentPage - 2);
-        let end = Math.min(total, start + maxButtons - 1);
+        let end = Math.min(totalPages, start + maxButtons - 1);
 
         if (end - start < maxButtons - 1) {
             start = Math.max(1, end - maxButtons + 1);
@@ -88,9 +92,9 @@ export default function GlobalPageList({ pathname }: { pathname: string }) {
             pages.push(i);
         }
 
-        if (end < total) {
-            if (end < total - 1) pages.push('...');
-            pages.push(total);
+        if (end < totalPages) {
+            if (end < totalPages - 1) pages.push('...');
+            pages.push(totalPages);
         }
 
         return (
@@ -129,7 +133,7 @@ export default function GlobalPageList({ pathname }: { pathname: string }) {
             );
         } else {
             return (
-                <i className="bi bi-sort ms-1 text-secondary"></i>
+                <i className="bi bi-sort-down-alt ms-1 text-secondary"></i>
             );
         }
     };
@@ -140,11 +144,12 @@ export default function GlobalPageList({ pathname }: { pathname: string }) {
             setOrderBy(field);
             setSortDirection('asc');
         }
+        setCurrentPage(1);
     };
     const handlePageAction = (action: string) => {
         switch (action) {
             case 'new':
-                router.push('/crm/customers/new');
+                router.push(`${pathname}/new`);
                 break;
             case 'export':
                 alert('Dışa aktarma işlemi henüz uygulanmadı.');
@@ -167,7 +172,7 @@ export default function GlobalPageList({ pathname }: { pathname: string }) {
                         <form className="row g-2">
                             <div className="col-auto">
                                 <button className="btn btn-primary btn-sm" type="button" onClick={() => dataload()}>
-                                    <i className="bi bi-refresh me-1"></i> Yemile
+                                    <i className="bi bi-arrow-clockwise me-1"></i> Yenile
                                 </button>
                             </div>
 
@@ -241,16 +246,16 @@ export default function GlobalPageList({ pathname }: { pathname: string }) {
                             <span className="input-group-text" style={{ width: 120 }}>{label}</span>
                             <input name={name} type="text" className="form-control" value={filterData?.[name] || ''} onChange={handleFilterChange} />
                             <button type="button" className="input-group-text" onClick={() => setFilterData((prev) => ({ ...prev, [name]: '' }))}>
-                                <i className="bi bi-x me-1"></i>
+                                <i className="bi bi-x"></i>
                             </button>
                         </div>
                     ))}
 
                     <div className="d-flex gap-2 mt-3">
-                        <button className="btn btn-secondary w-100">
+                        <button className="btn btn-secondary w-100" onClick={handleApplyFilters}>
                             <i data-feather="check" className="me-1" /> Uygula
                         </button>
-                        <button className="btn btn-danger w-100" onClick={() => setFilterData(Object.fromEntries((pageData?.filterFields ?? []).map(f => [f.name, ''])))} >
+                        <button className="btn btn-danger w-100" onClick={handleClearFilters} >
                             <i data-feather="x" className="me-1" /> Temizle
                         </button>
                     </div>

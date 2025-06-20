@@ -18,6 +18,8 @@ export interface PageDataRequest {
     page: number;
     pathname: string;
     orderBy?: string;
-    pageLimit:number ;
-    filterFields: FilterField[];
+    sortDirection?: 'asc' | 'desc';
+    pageLimit: number;
+    search?: string;
+    filterFields: { name: string; value: string }[];
 }
