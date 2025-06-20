@@ -87,6 +87,9 @@ export default function GenericTablePage() {
     const [orderBy, setOrderBy] = useState<string>('');
     const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
 
+
+
+
     useEffect(() => {
         feather.replace();
         setTimeout(() => {
@@ -154,9 +157,9 @@ export default function GenericTablePage() {
                         className={`page-item ${p === currentPage ? 'active' : ''} ${p === '...' ? 'disabled' : ''}`}
                     >
                         {p === '...' ? (
-                            <span className="page-link">...</span>
+                            <span className="page-link" style={{ zIndex: 0 }}>...</span>
                         ) : (
-                            <button className="page-link" onClick={() => handlePageChange(Number(p))}>
+                            <button className="page-link" style={{ zIndex: 0 }} onClick={() => handlePageChange(Number(p))}>
                                 {p}
                             </button>
                         )}
@@ -169,7 +172,6 @@ export default function GenericTablePage() {
             </ul>
         );
     };
-
 
     const getStatusBadgeClass = (status: string) => {
         switch (status) {
@@ -192,8 +194,6 @@ export default function GenericTablePage() {
             );
         }
     };
-
-
 
     const handleSort = (field: string) => {
         if (orderBy === field) {
@@ -254,7 +254,7 @@ export default function GenericTablePage() {
                         </thead>
                         <tbody>
                             {pageData?.data.map((item, index) => (
-                                <tr key={index} onDoubleClick={() => router.push(`/crm/customers/${item.id}`)}>
+                                <tr style={{ cursor: 'pointer' }} key={index} onDoubleClick={() => router.push(`/crm/customers/${item.id}`)}>
                                     <td style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                                         {item.id ?? index + 1}
                                     </td>
@@ -264,7 +264,7 @@ export default function GenericTablePage() {
                                             style={{
                                                 whiteSpace: 'nowrap',
                                                 overflow: 'hidden',
-                                                textOverflow: 'ellipsis'
+                                                textOverflow: 'ellipsis',
                                             }}
                                         >
                                             {f.name === 'status' ? (
