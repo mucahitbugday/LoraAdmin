@@ -58,8 +58,6 @@ export const cookieService = {
 export const menuService = {
 
     async getPageList(req: PageDataRequest): Promise<PageDataResponse> {
-        console.log('Fetching page list with request:', req);
-
         const response = await api.post<PageDataResponse>('/helper/page-data', { req });
         return response.data;
     },
