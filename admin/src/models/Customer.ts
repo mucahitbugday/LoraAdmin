@@ -70,8 +70,8 @@ export interface Customer {
   category: string;
   source: string
   registerDate: string
-  identityInfo: IdentityInfo;
-  addressInfo: AddressInfo;
-  crmCards: CrmCard[];
-  purchases: Purchase[];
+  identityInfo?: IdentityInfo;
+  addressInfo?: AddressInfo;
+  crmCards?: CrmCard[];
+  purchases?: Purchase[];
 } 

@@ -1,69 +1,174 @@
 'use client';
 
-import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
-import { customers } from '@/data';
-import type { Customer } from '@/models/Customer';
+import { useRouter } from 'next/navigation';
 import feather from 'feather-icons';
 
-export default function CustomersPage() {
-    const router = useRouter();
-    const [search, setSearch] = useState('');
-    const [filterData, setFilterData] = useState<Record<string, string>>({
-        fullName: '',
-        customerType: '',
-        email: '',
-        phone: '',
-        status: '',
-        source: '',
-        store: '',
-        registerDate: '',
-    });
+interface FilterField {
+    name: string;
+    label: string;
+}
 
-    // Pagination state
+interface PageData<T = any> {
+    page: number;
+    pageCount: number;
+    pageTodalCount: number;
+    pageTitle: string;
+    orderBy?: string;
+    data: T[];
+    filterFields: FilterField[];
+}
+
+function generateSampleData() {
+    const names = ['John Deep', 'Alice Stone', 'Michael Ray', 'Sara Connor', 'Tom Hardy'];
+    const emails = ['john.doe@example.com', 'alice@example.com', 'mike@example.com', 'sara@example.com', 'tom@example.com'];
+    const stores = ['Piazza AVM', 'Forum İstanbul', 'Cevahir', 'Optimum', 'Kanyon'];
+    const sources = ['e-ticaret', 'mağaza', 'mobil', 'call center'];
+    const statuses = ['true', 'false'];
+
+    const result = [];
+
+    for (let i = 1; i <= 15; i++) {
+        const nameIndex = Math.floor(Math.random() * names.length);
+        const emailIndex = Math.floor(Math.random() * emails.length);
+        const storeIndex = Math.floor(Math.random() * stores.length);
+        const sourceIndex = Math.floor(Math.random() * sources.length);
+        const statusIndex = Math.floor(Math.random() * statuses.length);
+
+        result.push({
+            id: i,
+            fullName: names[nameIndex],
+            customerType: Math.random() > 0.5 ? 'Bireysel' : 'Kurumsal',
+            email: emails[emailIndex],
+            phone: `5${Math.floor(100000000 + Math.random() * 900000000)}`,
+            status: statuses[statusIndex],
+            source: sources[sourceIndex],
+            store: stores[storeIndex],
+            registerDate:
+                new Date(2025, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1)
+                    .toLocaleDateString('tr-TR') +
+                ' ' +
+                new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })
+        });
+    }
+
+    return result;
+}
+
+const recordCount = 10;
+
+const sampleData: PageData = {
+    pageTitle: 'Müşteri Listesi',
+    page: 1,
+    orderBy: '',
+    pageCount: Math.ceil(recordCount / 10),
+    pageTodalCount: recordCount,
+    data: generateSampleData(),
+    filterFields: [
+        { name: 'fullName', label: 'Ad Soyad' },
+        { name: 'customerType', label: 'Müşteri Tipi' },
+        { name: 'email', label: 'Email' },
+        { name: 'phone', label: 'Telefon' },
+        { name: 'status', label: 'Durum' },
+        { name: 'source', label: 'Kaynak' },
+        { name: 'store', label: 'Mağaza' },
+        { name: 'registerDate', label: 'Kayıt Tarihi' }
+    ]
+};
+
+
+
+export default function GenericTablePage() {
+    const router = useRouter();
+    const [pageData, setPageData] = useState<PageData | null>(null);
+    const [search, setSearch] = useState('');
+    const [filterData, setFilterData] = useState<Record<string, string>>({});
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 10;
+
+    // Feather ve veri yükleme
+    useEffect(() => {
+        feather.replace();
+        setTimeout(() => {
+
+            setPageData(sampleData);
+            setFilterData(Object.fromEntries(sampleData.filterFields.map(f => [f.name, ''])));
+        }, 500);
+    }, []);
 
     useEffect(() => {
+        setPageData(sampleData);
+        setCurrentPage(sampleData.page);
         feather.replace();
     }, []);
 
-    // Arama ve filtre değişince sayfa 1'e dönsün
-    useEffect(() => {
-        setCurrentPage(1);
-    }, [search, filterData]);
-
-    const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        setFilterData((prev) => ({ ...prev, [name]: value }));
+        setFilterData(prev => ({ ...prev, [name]: value }));
+        setCurrentPage(1);
     };
 
-    const filteredData = customers.filter((customer: Customer) => {
-        const matchesSearch =
-            customer.fullName?.toLowerCase().includes(search.toLowerCase()) ||
-            customer.email?.toLowerCase().includes(search.toLowerCase()) ||
-            customer.addressInfo?.officialTitle?.toLowerCase().includes(search.toLowerCase());
-
-        const matchesFilters = Object.entries(filterData).every(([key, val]) => {
-            if (!val) return true;
-            const customerValue = (customer as any)[key];
-            return customerValue?.toString().toLowerCase().includes(val.toLowerCase());
-        });
-
-        return matchesSearch && matchesFilters;
-    });
-
-    // Pagination hesaplama
-    const totalPages = Math.ceil(filteredData.length / itemsPerPage);
-    const paginatedData = filteredData.slice(
-        (currentPage - 1) * itemsPerPage,
-        currentPage * itemsPerPage
-    );
-
     const handlePageChange = (page: number) => {
-        if (page >= 1 && page <= totalPages) {
+        const total = pageData?.pageTodalCount ?? 1;
+        if (page >= 1 && page <= total) {
             setCurrentPage(page);
         }
+    };
+
+    const renderPagination = () => {
+        if (!pageData) return null;
+
+        const total = pageData.pageTodalCount;
+        const maxButtons = 5;
+        const pages: (number | string)[] = [];
+
+        const showLeft = currentPage > 1;
+        const showRight = currentPage < total;
+
+        let start = Math.max(1, currentPage - 2);
+        let end = Math.min(total, start + maxButtons - 1);
+
+        if (end - start < maxButtons - 1) {
+            start = Math.max(1, end - maxButtons + 1);
+        }
+
+        for (let i = start; i <= end; i++) {
+            pages.push(i);
+        }
+
+        if (end < total) {
+            if (end < total - 1) pages.push('...');
+            pages.push(total);
+        }
+
+        return (
+            <ul className="pagination pagination-sm mb-0">
+                {/* Sola git */}
+                <li className={`page-item ${!showLeft ? 'disabled' : ''}`}>
+                    <button className="page-link" onClick={() => handlePageChange(currentPage - 1)}>&laquo;</button>
+                </li>
+
+                {/* Sayfa numaraları */}
+                {pages.map((p, i) => (
+                    <li
+                        key={i}
+                        className={`page-item ${p === currentPage ? 'active' : ''} ${p === '...' ? 'disabled' : ''}`}
+                    >
+                        {p === '...' ? (
+                            <span className="page-link">...</span>
+                        ) : (
+                            <button className="page-link" onClick={() => handlePageChange(Number(p))}>
+                                {p}
+                            </button>
+                        )}
+                    </li>
+                ))}
+
+                {/* Sağa git */}
+                <li className={`page-item ${!showRight ? 'disabled' : ''}`}>
+                    <button className="page-link" onClick={() => handlePageChange(currentPage + 1)}>&raquo;</button>
+                </li>
+            </ul>
+        );
     };
 
     const getStatusBadgeClass = (status: string) => {
@@ -74,30 +179,19 @@ export default function CustomersPage() {
         }
     };
 
-    const filterFields: { name: keyof Customer; label: string }[] = [
-        { name: 'fullName', label: 'Ad Soyad' },
-        { name: 'customerType', label: 'Müşteri Tipi' },
-        { name: 'email', label: 'Email' },
-        { name: 'phone', label: 'Telefon' },
-        { name: 'status', label: 'Durum' },
-        { name: 'source', label: 'Kaynak' },
-        { name: 'store', label: 'Mağaza' },
-        { name: 'registerDate', label: 'Kayıt Tarihi' },
-    ];
-
     return (
         <>
             <div className="card flex-fill w-100 mt-2">
                 <div className="card-header py-2">
-                    <div className="align-items-end d-flex justify-content-between">
-                        <h5 className="card-title mb-0">Müşteri Listesi</h5>
+                    <div className="d-flex justify-content-between align-items-end">
+                        <h5 className="card-title mb-0">{pageData?.pageTitle}</h5>
                         <form className="row g-2">
                             <div className="col-auto">
                                 <input
                                     type="text"
-                                    className="form-control form-control-sm bg-light rounded-2 border-0"
-                                    style={{ width: 200 }}
+                                    className="form-control form-control-sm bg-light border-0 rounded-2"
                                     placeholder="Ara..."
+                                    style={{ width: 200 }}
                                     value={search}
                                     onChange={(e) => setSearch(e.target.value)}
                                 />
@@ -108,129 +202,81 @@ export default function CustomersPage() {
                                     type="button"
                                     data-bs-toggle="offcanvas"
                                     data-bs-target="#offcanvasRight"
-                                    aria-controls="offcanvasRight"
                                 >
                                     Filtre
                                 </button>
                             </div>
                             <div className="col-auto">
-                                <button className="btn btn-info btn-sm" type="button">
-                                    Müşteri Ekle
+                                <button className="btn btn-info btn-sm" type="button" onClick={() => router.push(`/crm/create`)}>
+                                    Yeni Kayıt
                                 </button>
                             </div>
                         </form>
                     </div>
                 </div>
 
-                <div className="card-body py-2">
-                    <table
-                        className="table table-striped table-hover"
-                        style={{ width: '100%', tableLayout: 'fixed', cursor: 'pointer' }}
-                    >
+                <div className="py-2">
+                    <table className="table table-striped table-hover" style={{ tableLayout: 'fixed', width: '100%' }}>
                         <thead className="table-light">
                             <tr>
                                 <th style={{ width: '5%' }}>#</th>
-                                <th style={{ width: '15%' }}>Adı Soyadı</th>
-                                <th style={{ width: '15%' }}>Müşteri Tipi</th>
-                                <th style={{ width: '20%' }}>Email</th>
-                                <th style={{ width: '15%' }}>Telefon</th>
-                                <th style={{ width: '10%' }}>Durum</th>
-                                <th style={{ width: '10%' }}>Kaynak</th>
-                                <th style={{ width: '10%' }}>Mağaza</th>
-                                <th style={{ width: '10%' }}>Kayıt Tarihi</th>
+                                {pageData?.filterFields.map((f) => (
+                                    <th key={f.name}>{f.label}</th>
+                                ))}
                             </tr>
                         </thead>
                         <tbody>
-                            {paginatedData.map((customer) => (
-                                <tr
-                                    key={customer.id}
-                                    onDoubleClick={() => router.push(`/crm/customers/${customer.id}`)}
-                                    className="align-middle"
-                                >
-                                    <td>{customer.id}</td>
-                                    <td>{customer.fullName}</td>
-                                    <td>{customer.customerType}</td>
-                                    <td>{customer.email}</td>
-                                    <td>{customer.phone}</td>
-                                    <td>
-                                        <span className={`badge ${getStatusBadgeClass(customer.status)}`}>
-                                            {customer.status === 'true' ? 'Aktif' : 'Pasif'}
-                                        </span>
+                            {pageData?.data.map((item, index) => (
+                                <tr key={index} onDoubleClick={() => router.push(`/crm/customers/${item.id}`)}>
+                                    <td style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                        {item.id ?? index + 1}
                                     </td>
-                                    <td>{customer.source}</td>
-                                    <td>{customer.store}</td>
-                                    <td>{customer.registerDate}</td>
+                                    {pageData.filterFields.map(f => (
+                                        <td
+                                            key={f.name}
+                                            style={{
+                                                whiteSpace: 'nowrap',
+                                                overflow: 'hidden',
+                                                textOverflow: 'ellipsis'
+                                            }}
+                                        >
+                                            {f.name === 'status' ? (
+                                                <span className={`badge ${getStatusBadgeClass(item[f.name])}`}>
+                                                    {item[f.name] === 'true' ? 'Aktif' : 'Pasif'}
+                                                </span>
+                                            ) : (
+                                                item[f.name]
+                                            )}
+                                        </td>
+                                    ))}
                                 </tr>
                             ))}
                         </tbody>
+
                     </table>
 
                     {/* Pagination */}
-                    <div className="d-flex justify-content-center align-items-center my-2">
-                        <nav>
-                            <ul className="pagination pagination-sm mb-0">
-                                <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
-                                    <button
-                                        className="page-link"
-                                        onClick={() => handlePageChange(currentPage - 1)}
-                                    >
-                                        &laquo;
-                                    </button>
-                                </li>
-                                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                                    <li
-                                        key={page}
-                                        className={`page-item ${page === currentPage ? 'active' : ''}`}
-                                    >
-                                        <button
-                                            className="page-link"
-                                            onClick={() => handlePageChange(page)}
-                                        >
-                                            {page}
-                                        </button>
-                                    </li>
-                                ))}
-                                <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
-                                    <button
-                                        className="page-link"
-                                        onClick={() => handlePageChange(currentPage + 1)}
-                                    >
-                                        &raquo;
-                                    </button>
-                                </li>
-                            </ul>
-                        </nav>
+                    <div className="d-flex justify-content-center my-2">
+                        <nav>{renderPagination()}</nav>
                     </div>
                 </div>
             </div>
 
-            {/* OFFCANVAS */}
-            <div
-                className="offcanvas offcanvas-end"
-                tabIndex={-1}
-                id="offcanvasRight"
-                aria-labelledby="offcanvasRightLabel"
-            >
+            {/* Offcanvas Filter */}
+            <div className="offcanvas offcanvas-end" tabIndex={-1} id="offcanvasRight">
                 <div className="offcanvas-header border-bottom">
                     <h5 className="offcanvas-title">Filtreleme</h5>
-                    <button
-                        type="button"
-                        className="btn-close text-reset"
-                        data-bs-dismiss="offcanvas"
-                        aria-label="Close"
-                    ></button>
+                    <button className="btn-close" data-bs-dismiss="offcanvas" aria-label="Close" />
                 </div>
                 <div className="offcanvas-body">
-                    {filterFields.map(({ name, label }) => (
+                    {pageData?.filterFields.map(({ name, label }) => (
                         <div key={name} className="input-group mb-2">
-                            <span className="input-group-text" style={{ width: '120px' }}>
-                                {label}
-                            </span>
+                            <span className="input-group-text" style={{ width: 120 }}>{label}</span>
                             <input
                                 name={name}
                                 type="text"
                                 className="form-control"
-                                value={filterData[name] || ''}
+                                value={filterData?.[name] || ''}
                                 onChange={handleFilterChange}
                             />
                             <button
@@ -243,26 +289,17 @@ export default function CustomersPage() {
                         </div>
                     ))}
 
-                    <div className="gap-2 d-flex">
-                        <button className="btn btn-secondary flex-grow-1">
-                            <i className="align-middle" data-feather="check"></i> Uygula
+                    <div className="d-flex gap-2 mt-3">
+                        <button className="btn btn-secondary w-100">
+                            <i data-feather="check" className="me-1" /> Uygula
                         </button>
                         <button
-                            className="btn btn-danger flex-grow-1"
+                            className="btn btn-danger w-100"
                             onClick={() =>
-                                setFilterData({
-                                    fullName: '',
-                                    customerType: '',
-                                    email: '',
-                                    phone: '',
-                                    status: '',
-                                    source: '',
-                                    store: '',
-                                    registerDate: '',
-                                })
+                                setFilterData(Object.fromEntries((pageData?.filterFields ?? []).map(f => [f.name, ''])))
                             }
                         >
-                            <i className="align-middle" data-feather="x"></i> Temizle
+                            <i data-feather="x" className="me-1" /> Temizle
                         </button>
                     </div>
                 </div>

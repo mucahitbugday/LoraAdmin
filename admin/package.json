@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack -p 5001",
+    "dev": "next dev --turbopack",
     "build": "next build",
     "prebuild": "node build-info.ts",
     "start": "next start -p 5001",
