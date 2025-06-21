@@ -75,4 +75,3 @@ BEGIN
 
       DROP TABLE #tmp;
 END;
-GO
