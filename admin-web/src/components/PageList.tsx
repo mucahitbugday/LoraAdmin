@@ -12,14 +12,16 @@ export default function GlobalPageList({ pathname }: { pathname: string }) {
     const [search, setSearch] = useState('');
     const [filterData, setFilterData] = useState<Record<string, string>>({});
     const [currentPage, setCurrentPage] = useState(1);
-    const [pageLimit, setPageLimit] = useState(12);
-
+    const [pageLimit, setPageLimit] = useState(15);
 
     const [orderBy, setOrderBy] = useState<string>('');
     const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
 
-
     const dataload = async () => {
+        console.log('dataload', Object.entries(filterData)
+            .map(([name, value]) => ({ name, value }))
+            .filter(f => f.value)
+        );
         const req: PageDataRequest = {
             page: currentPage,
             pathname: pathname,
@@ -74,7 +76,6 @@ export default function GlobalPageList({ pathname }: { pathname: string }) {
         if (!pageData) return null;
 
         const totalPages = Math.ceil(pageData.pageTodalCount / pageLimit);
-        console.log('Total records:', pageData.pageTodalCount, 'Page limit:', pageLimit, 'Total pages:', totalPages);
         const maxButtons = 5;
         const pages: (number | string)[] = [];
 

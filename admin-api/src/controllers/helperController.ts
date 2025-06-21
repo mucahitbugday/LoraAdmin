@@ -3,7 +3,52 @@ import { executeSP, executeSQL } from '../services/dbService'
 import { getDbName, getProcedureParams } from '../utils/helperUtils';
 import { cacheService } from '../services/redisService';
 
+export const getGlobalPageList = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const SessionUserID = Number(req.body.SessionUserID);
+        const menuPath = req.body.req.pathname;
+        const filters = req.body.req.filterFields || [];
+        const orderBy = req.body.req.orderBy || '1 DESC';
+        const pageNumber = req.body.req.page || 1
+        const pageLimit = req.body.req.pageLimit || 50
 
+        const spNameResult = await executeSQL(`SELECT ProcedureName FROM dbo.SetupMenu WHERE Path = '${menuPath}'`, false);
+        const spName = spNameResult?.ProcedureName;
+
+        const procParams = await getProcedureParams(spName);
+        const spParams: Record<string, any> = {};
+
+        if (procParams.includes('SessionUserID')) spParams['SessionUserID'] = SessionUserID;
+        if (procParams.includes('pageNumber')) spParams['pageNumber'] = pageNumber;
+        if (procParams.includes('pageLimit')) spParams['pageLimit'] = pageLimit;
+        if (procParams.includes('pageOrderBy')) spParams['pageOrderBy'] = orderBy;
+
+        for (const filter of filters) {
+            if (procParams.includes(filter.key)) {
+                spParams[filter.key] = filter.value;
+            }
+        }
+
+        const result = await executeSP(spName, false, spParams);
+
+        // console.log('getGlobalPageList result0:', result[0][0]);
+        // console.log('getGlobalPageList result1:', result[1]);
+        // console.log('getGlobalPageList result2:', result[2]);
+        // console.log('getGlobalPageList result3:', result[3]);
+
+        res.status(200).json({
+            pageTitle: result[0][0]?.pageTitle || 'Sayfa Başlığı',
+            page: result[0][0]?.page || 1,
+            orderBy: result[0][0]?.orderBy || '1 DESC',
+            pageTodalCount: result[0][0]?.pageTodalCount || 1,
+            butons: result[1] || [],
+            filterFields: result[2] || [],
+            data: result[3] || [],
+        });
+    } catch (error) {
+        res.status(500).json({ statu: false, title: 'Hata', message: 'İşlem sırasında bir hata oluştu. Lütfen daha sonra tekrar deneyin.', });
+    }
+}
 
 
 export const agetGlobalPageList = async (req: Request, res: Response): Promise<void> => {
@@ -54,52 +99,7 @@ export const agetGlobalPageList = async (req: Request, res: Response): Promise<v
     }
 }
 
-export const getGlobalPageList = async (req: Request, res: Response): Promise<void> => {
-    try {
-        const SessionUserID = Number(req.body.SessionUserID);
-        const menuPath = req.body.req.pathname;
-        const filters = req.body.req.filterFields || [];
-        const orderBy = req.body.req.orderBy || '1 DESC';
-        const pageNumber = req.body.req.page || 1
-        const pageLimit = req.body.req.pageLimit || 50
 
-        const spNameResult = await executeSQL(`SELECT ProcedureName FROM dbo.SetupMenu WHERE Path = '${menuPath}'`, false);
-        const spName = spNameResult?.ProcedureName;
-
-        const procParams = await getProcedureParams(spName);
-        const spParams: Record<string, any> = {};
-
-        if (procParams.includes('SessionUserID')) spParams['SessionUserID'] = SessionUserID;
-        if (procParams.includes('pageNumber')) spParams['pageNumber'] = pageNumber;
-        if (procParams.includes('pageLimit')) spParams['pageLimit'] = pageLimit;
-        if (procParams.includes('pageOrderBy')) spParams['pageOrderBy'] = orderBy;
-
-        for (const filter of filters) {
-            if (procParams.includes(filter.key)) {
-                spParams[filter.key] = filter.value;
-            }
-        }
-
-        const result = await executeSP(spName, false, spParams);
-
-        // console.log('getGlobalPageList result0:', result[0][0]);
-        // console.log('getGlobalPageList result1:', result[1]);
-        // console.log('getGlobalPageList result2:', result[2]);
-        // console.log('getGlobalPageList result3:', result[3]);
-
-        res.status(200).json({
-            pageTitle: result[0][0]?.pageTitle || 'Sayfa Başlığı',
-            page: result[0][0]?.page || 1,
-            orderBy: result[0][0]?.orderBy || '1 DESC',
-            pageTodalCount: result[0][0]?.pageTodalCount || 1,
-            butons: result[1] || [],
-            filterFields: result[2] || [],
-            data: result[3] || [],
-        });
-    } catch (error) {
-        res.status(500).json({ statu: false, title: 'Hata', message: 'İşlem sırasında bir hata oluştu. Lütfen daha sonra tekrar deneyin.', });
-    }
-}
 
 export const getKanbanPageData = async (req: Request, res: Response): Promise<void> => {
     try {
